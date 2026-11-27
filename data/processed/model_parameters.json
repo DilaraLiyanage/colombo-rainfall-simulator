@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "calibration_start": "2001-01-01",
   "calibration_end": "2020-12-31",
   "seed": 42,
@@ -110,5 +110,22 @@
         "parent_location_mm": 0
       }
     }
-  }
+  },
+  "season_by_month": {
+    "1": "NEM",
+    "2": "NEM",
+    "3": "FIM",
+    "4": "FIM",
+    "5": "SWM",
+    "6": "SWM",
+    "7": "SWM",
+    "8": "SWM",
+    "9": "SWM",
+    "10": "SIM",
+    "11": "SIM",
+    "12": "NEM"
+  },
+  "transition_season": "destination_date",
+  "initial_state_semantics": "day_before_first_date",
+  "holdout_initial_state": 1
 }

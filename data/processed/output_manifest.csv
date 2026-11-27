@@ -12,7 +12,7 @@ data/processed/distribution_quantiles.csv,C12,distribution quantiles
 data/processed/distribution_tail_errors.csv,C12,distribution tail errors
 data/processed/analytical_benchmarks.csv,C13,analytical benchmarks
 data/processed/seasonal_parameters.csv,C14,seasonal parameters
-data/processed/output_manifest.csv,C23,output manifest
+data/processed/output_manifest.csv,C30,output manifest
 data/processed/runtime_versions.csv,C16,runtime versions
 figures/F01_daily_rainfall.png,C08,daily rainfall
 figures/F02_monthly_climatology.png,C08,monthly climatology
@@ -28,8 +28,8 @@ figures/F11_fitted_cdfs.png,C15,fitted cdfs
 figures/F12_distribution_qq.png,C15,distribution qq
 figures/F13_upper_tail.png,C15,upper tail
 figures/F14_seasonal_transitions.png,C15,seasonal transitions
-data/processed/figure_data.json,C23,Numerical plotting primitives for regression comparison
-data/processed/model_parameters.json,C16,Calibrated homogeneous and seasonal model parameters for future consumers
+data/processed/figure_data.json,C30,Numerical plotting primitives for regression comparison
+data/processed/model_parameters.json,C30,Calibrated homogeneous and seasonal model parameters for future consumers
 data/processed/simulation_verification.csv,C18,simulation verification.csv
 data/processed/monte_carlo_analytical.csv,C19,monte carlo analytical.csv
 data/processed/annual_simulation_uncertainty.csv,C19,annual simulation uncertainty.csv
@@ -51,3 +51,23 @@ figures/F20_monthly_holdout.png,C22,F20 monthly holdout
 figures/F21_extreme_holdout.png,C22,F21 extreme holdout
 figures/F22_spell_holdout.png,C22,F22 spell holdout
 figures/F23_holdout_intervals.png,C22,F23 holdout intervals
+data/processed/seasonal_daily_expectations.csv,C25,seasonal daily expectations.csv
+data/processed/seasonal_analytical.csv,C25,seasonal analytical.csv
+data/processed/seasonal_verification.csv,C25,seasonal verification.csv
+data/processed/seasonal_holdout.csv,C26,seasonal holdout.csv
+data/processed/comparative_holdout.csv,C27,comparative holdout.csv
+data/processed/comparative_errors.csv,C27,comparative errors.csv
+data/processed/comparative_paired.csv,C27,comparative paired.csv
+data/processed/sensitivity_scenarios.csv,C28,sensitivity scenarios.csv
+data/processed/seasonal_sensitivity_config.json,C30,seasonal sensitivity config.json
+data/processed/seasonal_execution_runtime.csv,C30,seasonal execution runtime.csv
+figures/F24_seasonal_trajectory.png,C29,F24 seasonal trajectory
+figures/F25_seasonal_verification.png,C29,F25 seasonal verification
+figures/F26_comparative_monthly.png,C29,F26 comparative monthly
+figures/F27_comparative_seasonal_extremes.png,C29,F27 comparative seasonal extremes
+figures/F28_comparative_spells.png,C29,F28 comparative spells
+figures/F29_comparative_errors.png,C29,F29 comparative errors
+figures/F30_sensitivity_curves.png,C29,F30 sensitivity curves
+figures/F31_joint_sensitivity.png,C29,F31 joint sensitivity
+figures/F32_extreme_risk_changes.png,C29,F32 extreme risk changes
+figures/README.md,C30,Generated figure inventory

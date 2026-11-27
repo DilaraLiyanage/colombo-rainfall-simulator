@@ -1,2 +1,2 @@
 elapsed_seconds,python,bootstrap_seconds,execution_mode
-47.07364043899997,3.13.5,1.3738441269997566,isolated pinned worker
+43.27452479300001,3.13.5,0.0,local direct scientific source test

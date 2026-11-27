@@ -3,6 +3,7 @@
 __pycache__/
 *.pyc
 .venv/
+.venv-*/
 
 # Jupyter Notebook
 .ipynb_checkpoints/
@@ -66,3 +67,15 @@ Thumbs.db
 !/data/processed/holdout_aggregate_errors.csv
 !/data/processed/simulation_config.json
 !/data/processed/execution_runtime.csv
+
+# Seasonal simulation and sensitivity outputs
+!/data/processed/seasonal_daily_expectations.csv
+!/data/processed/seasonal_analytical.csv
+!/data/processed/seasonal_verification.csv
+!/data/processed/seasonal_holdout.csv
+!/data/processed/comparative_holdout.csv
+!/data/processed/comparative_errors.csv
+!/data/processed/comparative_paired.csv
+!/data/processed/sensitivity_scenarios.csv
+!/data/processed/seasonal_sensitivity_config.json
+!/data/processed/seasonal_execution_runtime.csv

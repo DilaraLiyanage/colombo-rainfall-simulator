@@ -1,0 +1,21 @@
+test,passed
+All twelve months,True
+Leap day NEM,True
+NEM parameter domain,True
+FIM parameter domain,True
+SWM parameter domain,True
+SIM parameter domain,True
+Exact reduction to homogeneous occurrence,True
+Exact reduction to homogeneous amounts,True
+Continuity 2023-12-30,True
+Continuity 2024-02-28,True
+Continuity 2024-04-29,True
+Continuity 2024-09-29,True
+Destination season switch,True
+Dry rainfall zero,True
+Wet support,True
+Same seed reproducibility,True
+Analytical stationary_wet_probability,True
+Analytical expected_daily_mm,True
+Analytical daily_P95_exceedance,True
+Analytical daily_P99_exceedance,True

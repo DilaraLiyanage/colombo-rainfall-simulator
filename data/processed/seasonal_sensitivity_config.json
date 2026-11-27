@@ -1,0 +1,21 @@
+{
+  "reps": 1000,
+  "annual_days": 365,
+  "multipliers": [
+    0.8,
+    0.9,
+    1.0,
+    1.1,
+    1.2
+  ],
+  "sensitivity_reps": 500,
+  "seed": 42,
+  "primary_threshold_mm": 25.2,
+  "secondary_threshold_mm": 46.296,
+  "paired_holdout_namespace": [
+    3
+  ],
+  "sensitivity_namespace": [
+    6
+  ]
+}
