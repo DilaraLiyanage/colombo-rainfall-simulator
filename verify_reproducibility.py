@@ -54,6 +54,7 @@ OCCURRENCE_METRICS = {'stationary_wet_probability', 'season_wet_frequency'}
 
 
 @dataclass(frozen=True)
+
 class Rule:
     name: str
     rtol: float = 0.0
@@ -61,7 +62,9 @@ class Rule:
     kind: str = 'numeric'
 
 
+# Exact invariants protect historical and discrete values; wider tolerances are limited to named continuous metrics.
 EXACT = Rule('exact_value', kind='exact')
+# These two near-zero rules also require each operand to be close to zero, not merely equal to the other.
 BASELINE_DELTA = Rule('analytical_baseline_zero', 0.0, 1e-12, 'baseline_zero')
 BASELINE_PERCENT = Rule('analytical_baseline_zero', 0.0, 1e-10, 'baseline_zero')
 STRICT = Rule('strict_numeric', RTOL, ATOL)
@@ -115,8 +118,14 @@ def is_occurrence(metric: str) -> bool:
 def error_ratio_rule(row: dict, floor: float) -> Rule:
     """Bound cancellation in dimensionless ratios using their reference denominator."""
     denominator = abs(float(row.get('analytical', row.get('historical', 0)) or 0))
-    return Rule('derived_error_ratio', 5e-6, max(ATOL, 2 * floor / denominator)) if denominator else STRICT
+    return Rule(
+        'derived_error_ratio',
+        5e-6,
+        max(ATOL, 2 * floor / denominator)
+    ) if denominator else STRICT
 
+
+# Resolve the scientific meaning of a CSV column before comparing values; avoid a blanket float tolerance.
 
 def csv_rule(filename: str, column: str, row: dict) -> Rule:
     """Only known fit-dependent fields receive expanded tolerances."""
@@ -204,6 +213,8 @@ def csv_rule(filename: str, column: str, row: dict) -> Rule:
     return STRICT
 
 
+# Use semantic JSON paths to distinguish parameters, configurations and figure data.
+
 def json_rule(filename: str, keys: tuple) -> Rule:
     if filename in {'simulation_config.json', 'seasonal_sensitivity_config.json'}:
         return EXACT
@@ -247,7 +258,11 @@ def json_rule(filename: str, keys: tuple) -> Rule:
         return STRICT  # observed quantiles, not theoretical quantiles
     if number == 'F18' and keys[1] in {0, 2}:
         return STRICT  # P95 and occurrence interval widths
-    if len(keys) > 2 and number in {'F16', 'F23', 'F25'} and keys[2] in {'collections', 'collection_segments', 'collection_paths'}:
+    if len(keys) > 2 and number in {'F16', 'F23', 'F25'} and keys[2] in {
+        'collections',
+        'collection_segments',
+        'collection_paths'
+    }:
         if keys[-1] == (0 if number == 'F25' else 1):
             return STRICT  # category/index coordinate, not calculated ratio
     if number == 'F25':
@@ -266,6 +281,7 @@ def json_rule(filename: str, keys: tuple) -> Rule:
 
 
 @dataclass
+
 class Group:
     counts: Counter = field(default_factory=Counter)
     max_abs: float = 0.0
@@ -362,8 +378,20 @@ class Comparison:
             metric = '/'.join(str(k) for k in keys[:3])
         else:
             metric = '.'.join(str(k) for k in keys if not isinstance(k, int)) or 'structure'
-        if base in {'simulation_config.json', 'seasonal_sensitivity_config.json', 'model_parameters.json'} and type(a) is not type(b) and json_rule(base, keys).kind == 'exact':
-            self.check(filename, metric, location, False, 'Exact configuration type changed', type(a).__name__, type(b).__name__)
+        if base in {
+            'simulation_config.json',
+            'seasonal_sensitivity_config.json',
+            'model_parameters.json'
+        } and type(a) is not type(b) and json_rule(base, keys).kind == 'exact':
+            self.check(
+                filename,
+                metric,
+                location,
+                False,
+                'Exact configuration type changed',
+                type(a).__name__,
+                type(b).__name__
+            )
         if isinstance(a, dict) and isinstance(b, dict):
             self.value(filename, metric, location + '.keys', sorted(a), sorted(b))
             for k in sorted(a.keys() & b.keys()):
@@ -397,7 +425,13 @@ class Comparison:
                        'Selected fit converged; valid parameters, starts/iterations; gradient/n <= 1e-6.',
                        'gradient/n <= 1e-6', gradient / n if n else 'undefined')
         except (ValueError, KeyError, ZeroDivisionError, OverflowError):
-            self.check(filename, 'optimisation_quality', location, False, 'Malformed optimisation diagnostics')
+            self.check(
+                filename,
+                'optimisation_quality',
+                location,
+                False,
+                'Malformed optimisation diagnostics'
+            )
 
     def count_check(self, filename, metric, location, a, b, denominator):
         """Recover integer event totals from exported rates, never round away changes."""
@@ -416,9 +450,17 @@ class Comparison:
                 self.record(filename, metric + '/event_or_state_count', location,
                             'EXACT' if i == j else 'REVIEW', EVENT_COUNT, i, j,
                             f'Count from exported rate; denominator={denominator}; inspect threshold crossings or state changes.',
-                            delta, abs(delta/i) if i else None, 0)
+                            delta, abs(delta / i) if i else None, 0)
         except (TypeError, ValueError, OverflowError):
-            self.check(filename, metric + '/count_grid', location, False, 'Cannot reconstruct integer count', a, b)
+            self.check(
+                filename,
+                metric + '/count_grid',
+                location,
+                False,
+                'Cannot reconstruct integer count',
+                a,
+                b
+            )
 
     def csv(self, filename, reference, candidate, context):
         columns, rows = read_csv(reference)
@@ -461,8 +503,14 @@ class Comparison:
                 writer.writerow([filename, metric, *(g.counts[s] for s in statuses),
                                  g.max_abs if g.numeric_pairs else '', g.max_rel if g.nonzero_reference_pairs else '',
                                  g.zero_reference_nonzero, g.numeric_pairs, '; '.join(sorted(g.policies)), outcome])
-        (self.report_dir / 'result.json').write_text(json.dumps({'mode': 'strict' if self.strict else 'scientific', 'counts': dict(self.totals), 'accepted': not (self.totals['FAIL'] or self.totals['REVIEW'])}, indent=2) + '\n', encoding='utf-8')
+        (self.report_dir / 'result.json').write_text(json.dumps({
+            'mode': 'strict' if self.strict else 'scientific',
+            'counts': dict(self.totals),
+            'accepted': not (self.totals['FAIL'] or self.totals['REVIEW'])
+        }, indent=2) + '\n', encoding='utf-8')
 
+
+# Recover integer event totals only where the exported denominator is known.
 
 class CountContext:
     """Use immutable reference configuration and calendar to recover count grids."""
@@ -561,11 +609,21 @@ def inventory(root: Path, label: str, checks: Comparison) -> tuple[dict, set]:
         path = (root / name).resolve()
         safe = not Path(name).is_absolute() and path.is_relative_to(root.resolve())
         exists = safe and path.is_file()
-        checks.check(name, 'manifest_presence', label, exists, 'Safe manifest path and existing file', 'present', 'present' if exists else 'missing or unsafe')
+        checks.check(
+            name,
+            'manifest_presence',
+            label,
+            exists,
+            'Safe manifest path and existing file',
+            'present',
+            'present' if exists else 'missing or unsafe'
+        )
         if exists:
             usable.add(name)
     return result, usable
 
+
+# Verify original bytes separately; a matching processed table is not evidence of raw-file integrity.
 
 def verify_raw(checks, candidate: Path, reference: Path, raw_dir: Path | None):
     directories = [('regenerated input', raw_dir or candidate / 'data/raw')]
@@ -580,8 +638,18 @@ def verify_raw(checks, candidate: Path, reference: Path, raw_dir: Path | None):
                              'Raw input unavailable; supply --raw-dir and retain C02 evidence.', expected, 'missing', review=True)
                 continue
             actual = hashlib.sha256(path.read_bytes()).hexdigest()
-            checks.check(filename, 'SHA256', label, actual == expected, 'Original raw byte checksum', expected, actual)
+            checks.check(
+                filename,
+                'SHA256',
+                label,
+                actual == expected,
+                'Original raw byte checksum',
+                expected,
+                actual
+            )
 
+
+# A tiny rainfall change can cross a fixed threshold; classify example days independently of numeric tolerances.
 
 def example_events(checks, expected, actual, context):
     """Inspect each exported example-day wet and strict exceedance classification."""
@@ -596,7 +664,11 @@ def example_events(checks, expected, actual, context):
                 checks.check(FIGURE_DATA, name + '/support', day_label,
                              all(math.isfinite(v) and (v == 0 or v >= context.wet_threshold) for v in (a, b)),
                              'Rainfall must be zero or at least the wet-day threshold', a, b)
-                for label, fn in [('wet', lambda v: v >= context.wet_threshold), ('P95', lambda v: v > q95), ('P99', lambda v: v > q99)]:
+                for label, fn in [
+                    ('wet', lambda v: v >= context.wet_threshold),
+                    ('P95', lambda v: v > q95),
+                    ('P99', lambda v: v > q99)
+                ]:
                     e, f = fn(a), fn(b)
                     checks.record(FIGURE_DATA, name + '/' + label, f'calendar day {day_label} (plot coordinate {day})',
                                   'EXACT' if e == f else 'REVIEW', EVENT_COUNT, e, f,
@@ -609,9 +681,21 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('reference', type=Path, help='Frozen completed S006 output root')
     parser.add_argument('regenerated', type=Path, help='New completed output root')
-    parser.add_argument('--strict', action='store_true', help='Original numerical tolerance for continuous/diagnostic fields; exact structural checks remain')
-    parser.add_argument('--raw-dir', type=Path, help='Original raw snapshots used for candidate run, if outside candidate/data/raw')
-    parser.add_argument('--report-dir', type=Path, help='New or empty report directory outside both input roots (default: temporary folder)')
+    parser.add_argument(
+        '--strict',
+        action='store_true',
+        help='Original numerical tolerance for continuous/diagnostic fields; exact structural checks remain'
+    )
+    parser.add_argument(
+        '--raw-dir',
+        type=Path,
+        help='Original raw snapshots used for candidate run, if outside candidate/data/raw'
+    )
+    parser.add_argument(
+        '--report-dir',
+        type=Path,
+        help='New or empty report directory outside both input roots (default: temporary folder)'
+    )
     args = parser.parse_args()
     reference, candidate = args.reference.resolve(), args.regenerated.resolve()
     if reference == candidate:
@@ -635,7 +719,7 @@ def main() -> int:
         # No extra scientific CSV/JSON/PNG is allowed in managed output directories.
         for root, label, records in [(reference, 'reference', ref), (candidate, 'regenerated', new)]:
             for subdir, suffixes in [('data/processed', {'.csv', '.json'}), ('figures', {'.png'})]:
-                observed = sorted(p.relative_to(root).as_posix() for p in ((root/subdir).iterdir() if (root/subdir).is_dir() else []) if p.is_file() and p.suffix.lower() in suffixes)
+                observed = sorted(p.relative_to(root).as_posix() for p in ((root / subdir).iterdir() if (root / subdir).is_dir() else []) if p.is_file() and p.suffix.lower() in suffixes)
                 declared = sorted(p for p in records if str(Path(p).parent).replace('\\', '/') == subdir and Path(p).suffix.lower() in suffixes)
                 checks.value(MANIFEST, 'managed_inventory', label + '/' + subdir, declared, observed)
         try:
@@ -645,16 +729,33 @@ def main() -> int:
             execution_error = True
             checks.check(MANIFEST, 'count_context', 'initialisation', False, str(exc))
         for name in sorted(ref_usable & new_usable):
-            a, b = reference/name, candidate/name
+            a, b = reference / name, candidate / name
             try:
                 if name in METADATA:
-                    checks.record(name, 'runtime_metadata', 'presence', 'DIAGNOSTIC', RUNTIME_METADATA, 'present', 'present', 'Platform/timing metadata intentionally not compared')
+                    checks.record(
+                        name,
+                        'runtime_metadata',
+                        'presence',
+                        'DIAGNOSTIC',
+                        RUNTIME_METADATA,
+                        'present',
+                        'present',
+                        'Platform/timing metadata intentionally not compared'
+                    )
                 elif name == MANIFEST:
                     continue  # exact path and record comparison above; row ordering is not scientific
                 elif name.endswith('.png'):
                     for path, label in [(a, 'reference'), (b, 'regenerated')]:
                         x, y, unit = png_resolution(path)
-                        checks.check(name, 'PNG_resolution', label, unit == 1 and abs(x*.0254-300) <= .1 and abs(y*.0254-300) <= .1, 'PNG signature/end marker and 300 DPI; pixels not compared', 300, (x*.0254,y*.0254,unit))
+                        checks.check(
+                            name,
+                            'PNG_resolution',
+                            label,
+                            unit == 1 and abs(x * .0254 - 300) <= .1 and abs(y * .0254 - 300) <= .1,
+                            'PNG signature/end marker and 300 DPI; pixels not compared',
+                            300,
+                            (x * .0254, y * .0254, unit)
+                        )
                 elif name.endswith('.csv'):
                     checks.csv(name, a, b, context)
                 elif name.endswith('.json'):
@@ -668,7 +769,13 @@ def main() -> int:
                             example_events(checks, expected, actual, context)
                     checks.tree(name, expected, actual)
                 else:
-                    checks.value(name, 'text', 'lines', a.read_text(encoding='utf-8').splitlines(), b.read_text(encoding='utf-8').splitlines())
+                    checks.value(
+                        name,
+                        'text',
+                        'lines',
+                        a.read_text(encoding='utf-8').splitlines(),
+                        b.read_text(encoding='utf-8').splitlines()
+                    )
             except (OSError, ValueError, KeyError, TypeError, struct.error, OverflowError) as exc:
                 execution_error = True
                 checks.check(name, 'read_error', 'file', False, str(exc))

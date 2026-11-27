@@ -1,66 +1,113 @@
 # Colombo Rainfall Simulator
 
-A calibrated stochastic daily rainfall generator for exploring rainfall variability and persistence in Colombo, Sri Lanka.
+A calibrated stochastic daily rainfall generator for exploring how rainfall occurrence, persistence and intensity influence extreme rainfall probability in Colombo, Sri Lanka.
 
-[Live demo (deployment to be verified)](https://dilaraliyanage.github.io/colombo-rainfall-simulator/) · [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/DilaraLiyanage/colombo-rainfall-simulator/blob/main/notebook/colombo-rainfall-simulator.ipynb)
+**Live Web Simulator:** [Open the deployed dashboard](https://dilaraliyanage.github.io/colombo-rainfall-simulator/)
 
-**Running interface:** seasonal baseline, seed 42, 365 days starting 2021-01-01. Actual Chromium capture from in-memory rendering of the local application assets; direct-file/Pages loading is pending independent verification.
+**Google Colab:** [Run the scientific notebook](https://colab.research.google.com/github/DilaraLiyanage/colombo-rainfall-simulator/blob/main/notebook/colombo-rainfall-simulator.ipynb)
 
-![Running rainfall dashboard](docs/screenshots/web-dashboard-desktop.png)
+**Source Repository:** [View the source code and scientific outputs](https://github.com/DilaraLiyanage/colombo-rainfall-simulator)
+
+![Running rainfall dashboard showing a seasonal synthetic trajectory, live statistics and scientific charts](docs/screenshots/web-dashboard-desktop.png)
+
+*Actual application capture: seasonal baseline, seed 42, 365 days beginning 2021-01-01. Captured during local-asset Chromium testing; not a screenshot of the deployed URL. The author subsequently reported successful independent local dashboard and live GitHub Pages acceptance tests.*
 
 [Full dashboard](docs/screenshots/web-dashboard.png) · [Mobile layout](docs/screenshots/web-dashboard-mobile.png)
 
 ## The problem
 
-How do rainfall occurrence patterns and intensity influence the probability of extreme rainfall events in Colombo? Synthetic sequences may support exploratory risk analysis, but are not operational forecasts.
+**How do rainfall occurrence patterns and intensity influence the probability of extreme rainfall events in Colombo?**
+
+Rainfall is intermittent, persistent and strongly right-skewed. Modelling wet/dry occurrence separately from the intensity on wet days allows these mechanisms to be investigated, including seasonal changes and prolonged spells. The simulator generates statistically plausible synthetic rainfall sequences; it does not predict weather on specific dates or estimate flood probability.
 
 ## Quick start
 
-Open `docs/index.html` directly in a modern browser (no server, build, external assets or credentials). The browser uses the generated `docs/model-parameters.js` asset. The expected Pages URL is linked above; deployment from `main` / `/docs` must be verified independently.
+**Web:** open the deployed dashboard above, or download the repository and open `docs/index.html` directly. HTML, CSS, JavaScript and the generated scientific parameter asset are local; no backend, CDN, build step or API key is required.
 
-Open the notebook using the badge after publication, then select Runtime → Run all. The notebook retrieves immutable snapshots from `data/raw/`, checks their SHA-256 values, reconstructs rainfall, calibrates all parameters, runs independent Monte Carlo verification and convergence experiments, evaluates the historical holdout, and regenerates all scientific outputs. No existing processed CSV, fitted parameters or figures are inputs. See [data instructions](data/README.md), [manifest](data/processed/output_manifest.csv) and [figure inventory](figures/README.md).
+**Notebook:** open the Google Colab link and select **Runtime → Run all**. The installation cell uses exact scientific pins, and C01 verifies installed and loaded versions. C02 retrieves and checks the raw snapshots. C03–C30 regenerate the full scientific pipeline, 32 scientific figures and the 72-entry output manifest. If a runtime preloads incompatible compiled packages, restart the session after installation and run all again rather than bypassing version assertions. The author reports successful independent Windows Python 3.14 and Google Colab execution of the frozen workflow.
 
-C01 checks exact scientific pins in `requirements.txt`, including actual imported module versions. The target environments are standard Windows Python 3.14 and Colab Python 3.13; the four pins are unchanged. Local execution searches parent directories for the repository root, reads `data/raw/` directly and writes outputs into the repository. Colab downloads both immutable public snapshots and checks their SHA-256 hashes. `RAINFALL_DATA_DIR` and `RAINFALL_OUTPUT_DIR` permit isolated offline tests. The first code cell uses standard Jupyter `%pip install` with the four exact pins; all scientific cells execute in the visible kernel. C01 checks installed and loaded versions, and stops on a mismatch. A fresh kernel is required; preloaded incompatible compiled packages may require a restart. No custom dispatch or worker is used. C01 invalidates the previous completion manifest and C30 creates it only after successful scientific execution. The notebook is distributed with cleared outputs. See [USER_GUIDE.md](USER_GUIDE.md) for independent execution and comparison instructions. The author reports successful Windows Python 3.14 execution with pandas 2.3.3 and all 72 outputs regenerated. Earlier numerical-equivalence and fresh Colab acceptance were pending at that stage; the available Linux diagnostic environment used pandas 2.2.3.
+**Local notebook (Windows PowerShell):** open the repository in VS Code, select the intended Python 3.14 kernel and run all cells from a fresh kernel. If needed, install the scientific pins and Jupyter kernel support first:
 
-The previous homogeneous revision used two local notebook runs (direct and fresh worker), which completed in 50.13 s and 49.57 s including kernel startup; all 50 non-timing outputs were byte-identical. The two timing files differed as expected. Python 3.13.5 and the pinned scientific dependencies were used. See [runtime versions](data/processed/runtime_versions.csv) and [execution runtime](data/processed/execution_runtime.csv). 
+```powershell
+python -m pip install -r requirements.txt
+python -m pip install ipykernel
+```
 
-Conventional notebook revision: the installation cell uses `%pip` followed by C01 imports and exact installed/loaded version checks; C02–C30 are source-identical to the previous scientific cells after removing the dispatch prefix. A Linux Python 3.13.5 diagnostic copy using the available pandas 2.2.3 completed all 31 code cells in 69.82 s including installation and kernel startup. It regenerated all 72 outputs and displayed all 32 figures. The existing metric-aware verifier accepted the outputs with zero REVIEW or FAIL records; 69 files were byte-identical to the reference and only three timing files differed. The delivered notebook retains pandas 2.3.3: its exact-pin test stopped at C01 because the configured package index did not provide that version. Those diagnostics did not verify Windows or Colab; the author has subsequently reported successful local and Colab notebook execution. A Colab runtime with already-imported incompatible packages may require one session restart; automatic no-intervention execution has not been established.
+The notebook finds the repository root, reads local `data/raw/` and overwrites outputs under `data/processed/` and `figures/`. Explicit `RAINFALL_DATA_DIR` and `RAINFALL_OUTPUT_DIR` overrides support isolated regression tests. See [data instructions](data/README.md), [output manifest](data/processed/output_manifest.csv), [figure inventory](figures/README.md) and [execution guide](USER_GUIDE.md).
 
 ## Using the demo
 
-Select homogeneous or seasonal, set a start date, duration (1–3650 days), preceding state, seed and scenario. Start animates; Pause/Resume preserve the state; Run instantly completes the remaining days. Reset clears the trajectory and unlocks parameters. The three sensitivity multipliers are 0.8–1.2 (odds for transitions, scale for intensity). The same JavaScript seed and configuration reproduce the trajectory. Analytical risk is horizon-averaged conditional on the chosen origin, not a single-trajectory frequency. See [USER_GUIDE.md](USER_GUIDE.md).
+Choose the homogeneous or seasonal model, start date, duration (1–3650 days), preceding day's state, seed and scenario. Start animates the trajectory; Pause/Resume preserve the generator state; Run instantly completes the remaining days; Reset clears results and unlocks settings. The three multipliers range from 0.8 to 1.2: odds for dry-to-wet and wet-to-wet transitions, scale for rainfall intensity. Odds changes are not percentage-point changes.
 
-After a scientific notebook run, regenerate the browser asset from the frozen model JSON and verification CSVs using `python generate_web_parameters.py` from the repository root. This standard-library conversion does not recalibrate or modify scientific outputs.
+The daily and cumulative rainfall charts, occurrence timeline, extreme-event counts and statistics describe a single synthetic trajectory. The separate analytical risk table averages model probabilities over the same horizon and origin. The full [user guide](USER_GUIDE.md) includes the reproducible seed-42 example and verification procedure.
+
+After deliberately regenerating the scientific notebook outputs, run `python generate_web_parameters.py` from the repository root to refresh `docs/model-parameters.js`. This standard-library utility converts the exported scientific JSON and benchmark CSVs; it does not refit the model or change the data. Never manually transcribe the calibrated values into JavaScript.
 
 ## Model and mathematics
 
-The calibrated homogeneous first-order occurrence model uses $P_{ij}=P(S_t=j\mid S_{t-1}=i)$ for dry/wet states, followed by conditional sampling of wet-day amounts. Wet amounts use a lower-truncated Gamma baseline (shape 0.708847, scale 11.343819 mm); exponential and log-normal alternatives were compared. The seasonal generator selects the four calibrated transition matrices and truncated Gamma fits by destination date, retaining state continuity. See [THEORY.md](THEORY.md).
+The original Open-Meteo hourly precipitation is reconstructed into daily totals (2001–2025). Thresholds and model parameters use calibration dates 2001–2020 only; the 2021–2025 holdout is reserved for aggregate validation. A day is wet at rainfall $R\geq0.1$ mm; dry model rainfall is zero. Extreme events strictly exceed the fixed all-day calibration P95 (25.2 mm) or secondary P99 (46.296 mm).
+
+The homogeneous occurrence model estimates $p_{ij}=\Pr(S_t=j\mid S_{t-1}=i)=n_{ij}/\sum_k n_{ik}$ from chronological wet/dry transitions. Wet-day amounts use a lower-truncated Gamma distribution, with exponential and log-normal alternatives compared using normalised likelihoods. The seasonal model selects the calibrated transition matrix and Gamma parameters by destination date and preserves state continuity across boundaries. For a threshold $u\geq0.1$ mm,
+
+$$\Pr(R_t>u)=\Pr(S_t=1)\Pr(X_t>u\mid X_t\geq0.1).$$
+
+The notebook uses inverse survival sampling; the browser uses Gamma rejection sampling to obtain the same conditional distribution without clipping. Full derivations, assumptions and numerical methods: [THEORY.md](THEORY.md).
 
 ## Verification
 
-The browser implementation passed 16 deterministic scientific checks (including 29 unique frozen sensitivity fixtures) and 11 analytical/Monte Carlo comparisons: 600 stationary homogeneous trajectories × 3,650 days and 1,000 calendar-dependent seasonal trajectories × 1,826 days. All use seed 42 with distinct seeded streams. Acceptance: absolute error ≤ 4 MCSE + 1e-9 using independent trajectory units; JavaScript analytical expectations separately agree with Python to atol=1e-9 plus rtol=1e-8. The largest analytical discrepancy was 3.31e-13. See [JavaScript evidence](docs/web-verification-results.json) and [Chromium interaction evidence](docs/web-browser-test-results.json). Chromium in-memory rendering passed 14 checks including both models, pause/resume, repeatability, reset, preset, leap day and mobile width; no uncaught JS errors. Managed browser policy blocked file:// and localhost navigation, so direct-file asset loading and deployed Pages remain independently unverified. Screenshots are actual local-asset renders, not deployment captures. No Node.js or test framework is required to run the dashboard.
+Implementation verification is distinct from validation against historical rainfall. The principal completed checks are:
 
-Preprocessing, calibration and quadrature assertions passed. All 21 deterministic/domain/reproducibility checks passed, and all seven stationary analytical benchmarks passed the four-MCSE tolerance using 600 independent 3,650-day trajectories. See [simulation checks](data/processed/simulation_verification.csv), [analytical comparisons](data/processed/monte_carlo_analytical.csv), [F16](figures/F16_analytical_verification.png) and [F17](figures/F17_convergence.png). Twenty independent batches at each of six replication counts yielded log-log RMSE slopes of −0.573 (wet probability), −0.484 (mean rainfall) and −0.471 (P95 exceedance). This verifies the numerical implementation, not the real-world adequacy of the model. The previous homogeneous revision was independently executed in Colab, as reported by its author. Subsequent local and Colab execution of the frozen scientific notebook has been reported by its author; this web update does not rerun or change it.
+| Check | Result | Evidence |
+|---|---|---|
+| Raw coverage, checksums, conservation and calibration invariants | Passed | [Data documentation](data/README.md) |
+| Homogeneous deterministic tests and stationary analytical comparisons | 21/21 and 7/7 | [Tests](data/processed/simulation_verification.csv) · [Benchmarks](data/processed/monte_carlo_analytical.csv) |
+| Convergence | RMSE slopes −0.573, −0.484, −0.471 for wet probability, daily rainfall and P95 risk | [Convergence](data/processed/convergence_slopes.csv) |
+| Seasonal tests and time-dependent analytical comparisons | 20/20 and 4/4 | [Tests](data/processed/seasonal_verification.csv) · [Benchmarks](data/processed/seasonal_analytical.csv) |
+| Browser deterministic and analytical/Monte Carlo parity | 16/16 and 11/11, including 29 shared-input sensitivity configurations | [JavaScript evidence](docs/web-verification-results.json) |
+| Browser interaction and responsive layout | 14/14 in the original Chromium local-asset test; subsequent independent local and deployed acceptance reported by the author | [Browser evidence](docs/web-browser-test-results.json) |
+
+The homogeneous analytical experiment uses 600 independent 3,650-day trajectories; seasonal verification uses 1,000 independent calendar-aligned 1,826-day trajectories. Acceptance is absolute error ≤ 4 trajectory-level Monte Carlo standard errors (MCSE) + 1e-9; deterministic mathematical calculations and cross-language analytical targets are checked separately. Individual JavaScript and NumPy random sequences need not be identical.
+
+![Monte Carlo estimates and analytical benchmarks](figures/F16_analytical_verification.png)
+
+*F16: independent stationary mathematical expectations versus simulated estimates; the intervals measure Monte Carlo uncertainty conditional on the fitted model.*
+
+The optional [read-only numerical verifier](verify_reproducibility.py) compares completed output roots against a frozen reference. It preserves exact historical and discrete invariants, metric-specific continuous tolerances and complete discrepancy reporting. See [comparison instructions and policy](USER_GUIDE.md#numerical-reproducibility-policy). In the readability regression, all 31 code-cell syntax trees and both Python utilities' syntax trees were preserved. A complete Linux Python 3.13.5 diagnostic notebook (using the available pandas 2.2.3, not the target 2.3.3) regenerated all 72 outputs with zero REVIEW/FAIL records; 69 files, including all 32 figures and their numerical data, were byte-identical. JavaScript original/revised comparisons and seed-42 trajectories were identical using the published parameter payload; desktop and mobile in-memory Chromium renderings were pixel-identical. These checks do not constitute a new Windows/Colab run or live deployment test of the readability revision.
 
 ## Concepts applied
 
-Concepts: stochastic processes for occurrence, conditional probability for transitions, random variate generation for amounts, Monte Carlo replication for uncertainty, parameter estimation and statistical model verification.
+- First-order discrete-time Markov chains, conditional probability and stationary/time-dependent probability propagation model occurrence.
+- Truncated distribution likelihood, parameter estimation, inverse survival and rejection sampling model rainfall intensity.
+- Independent pseudorandom streams, Monte Carlo replication, analytical benchmarks, confidence/prediction intervals and convergence tests quantify numerical uncertainty.
+- Chronological holdout validation, common random numbers and controlled sensitivity distinguish model realism from implementation correctness and parameter effects.
 
 ## Results, limitations and future work
 
-The Gamma baseline gives the lowest AIC/BIC among the compared wet-day distributions, but underestimates the far upper tail. The stationary analytical P95 risk is 5.4483%; the Monte Carlo estimate is 5.4398%. The independent 2021–2025 holdout ensemble (1,000 five-year trajectories, initialised from the final calibration state) estimates P95 frequency at 5.4338% versus 8.1599% historically, outside the 95% prediction interval of 4.4359–6.4622%. Historical mean daily rainfall and wet frequency also exceed their simulated intervals. The historical maximum complete wet spell is 254 days versus a simulated 95% interval of 56–142 days. Seasonal means and risks are not reproduced by the homogeneous model; no holdout values were used to refit parameters. See [holdout comparisons](data/processed/holdout_comparison.csv), [F20](figures/F20_monthly_holdout.png) and [F23](figures/F23_holdout_intervals.png).
+### Results
 
-The model separates occurrence from conditional intensity: $P(R>u)=\pi_1P(X>u\mid S=1)$. Dependence affects clustering, and Gamma parameters affect wet-day tail risk. This is a marginal-risk decomposition, not a causal finding. Prediction intervals describe trajectory variability; confidence intervals quantify Monte Carlo uncertainty conditional on fitted parameters. Reanalysis, parameter and structural uncertainty are not included. The 0.1 mm wet threshold, calibration all-day P95/P99, calibration/evaluation split and midnight correction remain unchanged. Best Match provenance and the aggregation discrepancy are unresolved. This simulator is neither a deterministic weather forecast nor a flood prediction system. The seasonal simulation and controlled sensitivity analysis are implemented. The interactive browser simulator implements these frozen models; no new fit or model extension is introduced.
+Gamma has the lowest AIC/BIC among the compared conditional intensity distributions, but underestimates the far tail. Under the stationary homogeneous model, analytical P95 probability is 5.4483% (Monte Carlo 5.4398%). Historical 2021–2025 P95 frequency is 8.1599%, outside the homogeneous 95% prediction interval of 4.4359–6.4622%. The predefined seasonal extension improves many aggregate diagnostics without refitting evaluation data:
 
-The seasonal comparison uses the same 1,000 five-year trajectories, calendar, preceding state and paired random draws. Monthly RMSE falls from 126.53 to 73.48 mm (41.93%); seasonal daily mean RMSE falls from 4.091 to 1.510 mm/day (63.08%). All four time-dependent analytical benchmarks pass. The seasonal overall P95 probability is 5.141% versus 8.160% historically (worse than homogeneous 5.434%); maximum complete wet spell improves from mean 87.66 to 185.96 days, versus historical 254 days. See [comparative results](data/processed/comparative_holdout.csv) and [verification](data/processed/seasonal_analytical.csv).
+| Diagnostic | Homogeneous | Seasonal | Historical / improvement |
+|---|---:|---:|---|
+| Monthly climatology RMSE (mm) | 126.53 | 73.48 | 41.93% lower |
+| Seasonal mean daily rainfall RMSE (mm/day) | 4.091 | 1.510 | 63.08% lower |
+| Overall daily P95 frequency | 5.434% | 5.141% | 8.160% observed |
+| Mean simulated maximum complete wet spell (days) | 87.66 | 185.96 | 254 days observed |
 
-Sensitivity uses 500 independent annual trajectories per unique scenario, with paired uniforms, ±20% odds or scale perturbations and the full persistence–intensity grid. Gamma scale +20% raises analytical P95 risk from 5.4483% to 8.1660%; persistence +20% raises it to 5.5721% but increases expected wet-spell duration from 17.85 to 21.22 days. This is model sensitivity, not a climate projection or causal finding. See [scenario results](data/processed/sensitivity_scenarios.csv), [figure inventory](figures/README.md) and [manifest](data/processed/output_manifest.csv).
+See [comparative errors](data/processed/comparative_errors.csv), [holdout comparison](data/processed/comparative_holdout.csv) and [F26](figures/F26_comparative_monthly.png). The seasonal model better represents rainfall timing and prolonged spells, but overall P95 risk is slightly worse.
 
-Two independent local processes ran every scientific source cell in sequence using the previous installed pandas pin, without the notebook bootstrap (57.51 s and 58.25 s). All 69 non-timing outputs, including 32 PNGs and numerical figure data, were byte-identical. The original local scientific-source regression was byte-identical under the previous dependency pins. The read-only [comparison utility](verify_reproducibility.py) now distinguishes exact invariants, strict numerical metrics, fitted continuous parameters, derived quantities, optimisation diagnostics and discrete changes requiring review. It writes complete discrepancy and grouped metric reports outside both compared roots. See [the verification policy](USER_GUIDE.md#numerical-reproducibility-policy).
+![Analytical and simulated sensitivity curves](figures/F30_sensitivity_curves.png)
 
-Compatibility diagnostic: two complete cleared-output notebook runs (including bootstrap and cell dispatch) finished in 64.54 s (direct) and 68.93 s (worker) on Linux Python 3.13.5 using a separately modified diagnostic copy pinned to the available pandas 2.2.3. Both regenerated all 72 outputs; 69 matched the supplied S006 reference byte-for-byte and only three timing files differed. Numerical comparisons passed. The delivered notebook retains pandas 2.3.3; its actual execution stopped in C01 at package installation because the package index was unavailable. The author subsequently reported successful Windows execution under the target pins. Those earlier checks were pending at the time; the author now reports successful local and Colab notebook execution.
+*F30: fixed-threshold sensitivity to occurrence odds, persistence odds and Gamma scale, with uncertainty across independent annual trajectories.*
 
-Cross-platform comparison policy: the supplied homogeneous Gamma fit from Windows differs from the reference by approximately 3.41e-8 (shape) and 5.94e-8 (scale) in relative terms, with effectively unchanged log-likelihood. These observations support a candidate 1e-6 fitted-parameter relative tolerance. All historical values, counts, configurations and classification labels remain exact. Changed simulated event/state counts require investigation and block acceptance. Continuous derived tolerances and diagnostic quality screening are documented in the user guide. This update changes verification tooling only, not the notebook, calibration, simulations or scientific outputs. The revised comparator was tested on reference copies and deliberate corruption fixtures; the author subsequently reported Windows comparison results and a targeted analytical baseline residual correction. The web update leaves that utility unchanged.
+The sensitivity experiment uses 500 annual trajectories per unique scenario, paired uniforms, five ±20% perturbation levels and the full persistence–intensity grid. Raising Gamma scale by 20% increases stationary analytical P95 risk from 5.4483% to 8.1660% (about 49.9% relative increase). Raising persistence odds by 20% increases it to 5.5721%, while extending the theoretical mean wet spell from 17.85 to 21.22 days. **Intensity is the dominant influence on marginal risk over the selected range; persistence matters for clustering.** See [sensitivity outputs](data/processed/sensitivity_scenarios.csv) and [F31](figures/F31_joint_sensitivity.png).
+
+### Limitations and future work
+
+- Reanalysis is not independent gauge truth. The acquisition URL relationship, underlying Best Match composition and hourly/daily accumulation discrepancy remain unresolved; see [provenance](data/README.md).
+- First-order dependence and a single truncated Gamma cannot fully reproduce exceptional wet spells or heavy tails. Seasonal modelling improves climatology but not every risk diagnostic; higher-order dependence and alternative tail models would require separate evaluation.
+- Confidence intervals estimate model-conditional expectations, prediction intervals describe synthetic trajectory variability, and neither automatically incorporates parameter, structural or reanalysis uncertainty. No holdout tuning is performed.
+- Perturbations are mathematical sensitivity experiments, not climate projections or causal environmental interventions. Rainfall exceedance is not flood probability; drainage, terrain, exposure and antecedent moisture are absent. This is not an operational weather forecast.
 
 ## Key references
 
@@ -73,8 +120,8 @@ Full list: [REFERENCES.md](REFERENCES.md).
 
 ## AI assistance
 
-AI assisted with cross-platform bootstrap and regression tooling, the initial scaffold, literature summaries, preprocessing, exploratory analysis, path corrections, calibration, likelihood diagnostics, analytical checks, homogeneous simulation, convergence, holdout evaluation dependency bootstrap corrections, seasonal simulation and sensitivity analysis. AI also assisted with the web dashboard, generated parameter asset and JavaScript verification. Author review and independent web execution/deployment verification remain pending.
+AI assisted with code and documentation, literature summaries, preprocessing, calibration, simulation and analytical checks, reproducibility tooling, dashboard implementation and readability refinement. The author directed scientific decisions and reports independent notebook, dashboard and deployment testing. Verification records distinguish observed execution evidence from outstanding platform checks; private evidence is maintained separately from this public repository.
 
 ## Licence and credits
 
-Code: [MIT](LICENSE). Dataset attribution and redistribution status: [data/README.md](data/README.md). Weather data are separately licensed under CC BY 4.0; see source credits and provenance limitations before redistribution.
+Code: [MIT](LICENSE). Weather data: modified Open-Meteo precipitation snapshots, [CC BY 4.0 attribution](https://open-meteo.com/en/license). See [data provenance, upstream notices and redistribution details](data/README.md). Academic references are separate from dataset attribution.

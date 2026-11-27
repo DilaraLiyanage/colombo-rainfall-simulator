@@ -1,62 +1,202 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Explore calibrated stochastic rainfall occurrence, intensity and extreme events in Colombo.">
-  <title>Colombo Rainfall Simulator</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="model-parameters.js" defer></script>
-  <script src="script.js" defer></script>
-</head>
-<body>
-  <header class="topbar">
-    <div class="brand"><svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#173a58"/><path d="M8 22a7 7 0 0 1 4-12 9 9 0 0 1 16 3 5 5 0 1 1 1 9H8Z" fill="none" stroke="#82caff" stroke-width="2" stroke-linejoin="round"/><path d="m13 27-2 5m10-5-2 5m10-5-2 5" stroke="#82caff" stroke-width="2" stroke-linecap="round"/></svg><div><span class="brand-title">Colombo Rainfall Simulator</span><span class="brand-sub">STOCHASTIC RAINFALL LAB</span></div></div>
-    <nav aria-label="Page navigation"><a href="#dashboard">Dashboard</a><a href="#about">Method &amp; guide</a><a href="https://github.com/DilaraLiyanage/colombo-rainfall-simulator">Repository ↗</a></nav>
-  </header>
-  <main id="dashboard">
-    <div class="hero"><div><div class="eyebrow">COLOMBO, SRI LANKA / DAILY MODEL</div><h1>Rainfall, occurrence &amp; extremes</h1><p>Explore how rainfall persistence and intensity change extreme-event risk.</p></div><div class="calibration"><span class="dot"></span><div><strong>Calibrated model</strong><small id="cal-period"></small></div></div></div>
-    <div id="fatal" role="alert" hidden></div>
-    <div class="workspace">
-      <aside class="panel controls" aria-labelledby="controls-heading">
-        <div class="panel-heading"><h2 id="controls-heading">Simulation controls</h2><span class="tag">Seeded</span></div>
-        <div class="actions"><button id="start" class="primary">Start</button><button id="pause" disabled>Pause</button><button id="resume" disabled>Resume</button><button id="reset">Reset</button><button id="instant" class="wide">Run instantly ↗</button></div>
-        <fieldset id="scenario-fields"><legend class="sr-only">Scenario parameters</legend>
-          <label for="model">Rainfall model</label><select id="model"><option value="seasonal">Seasonal · four seasons</option><option value="homogeneous">Homogeneous · constant</option></select>
-          <label for="preset">Scenario preset</label><select id="preset"><option value="baseline">Calibrated baseline</option><option value="intense">Increased intensity (+20%)</option><option value="persistent">Increased persistence (+20%)</option><option value="mild">Reduced intensity (−20%)</option><option value="combined">Persistence + intensity (+20%)</option><option value="custom">Custom</option></select>
-          <div class="field-grid"><div><label for="start-date">Start date</label><input id="start-date" type="date" value="2021-01-01" min="1900-01-01" max="2099-12-31" required></div><div><label for="duration">Duration (days)</label><input id="duration" type="number" value="365" min="1" max="3650" step="1" required></div></div>
-          <label for="origin">Preceding day's state</label><select id="origin"><option value="1">Wet</option><option value="0">Dry</option></select>
-          <div class="rule"></div><div class="small-title">Sensitivity multipliers</div>
-          <label class="range-label" for="k01">Dry → wet odds <output id="k01-value">1.00×</output></label><input id="k01" type="range" min="0.8" max="1.2" step="0.05" value="1">
-          <label class="range-label" for="k11">Wet → wet odds <output id="k11-value">1.00×</output></label><input id="k11" type="range" min="0.8" max="1.2" step="0.05" value="1">
-          <label class="range-label" for="kb">Gamma intensity scale <output id="kb-value">1.00×</output></label><input id="kb" type="range" min="0.8" max="1.2" step="0.05" value="1">
-          <div class="range-ends"><span>0.8×</span><span>1.2×</span></div><p class="help">Odds changes are relative, not percentage-point changes. Shape and extreme thresholds stay fixed.</p>
-          <label for="seed">Random seed (unsigned 32-bit)</label><input id="seed" type="number" min="0" max="4294967295" step="1" value="42" required>
-        </fieldset>
-        <label for="speed">Animation speed</label><select id="speed"><option value="10">10 days / sec</option><option value="30" selected>30 days / sec</option><option value="120">120 days / sec</option><option value="365">365 days / sec</option></select>
-        <p class="help" id="lock-note">Reset to change a scenario after starting. Speed remains adjustable.</p>
-      </aside>
-      <section class="results" aria-label="Simulation results">
-        <div class="panel status-panel"><div class="status-main"><span id="status" class="status" role="status">Ready</span><div class="current-date" id="current-date">—</div><div class="muted" id="progress-text">0 / 365 days</div></div><div class="current"><span class="muted">Current daily rainfall</span><strong id="current-rain">—</strong><span id="current-state" class="state-tag">Not started</span></div><progress id="progress" value="0" max="365" aria-label="Simulation progress"></progress></div>
-        <div class="metrics" id="metrics" aria-label="Calculated trajectory statistics"></div>
-        <section class="panel chart-panel"><div class="panel-heading"><div><h2>Daily rainfall</h2><p>Simulated precipitation · mm/day</p></div><div class="legend"><span><i class="blue"></i>Rainfall</span><span><i class="amber"></i>P95</span><span><i class="red"></i>P99</span></div></div><canvas id="rain-chart" role="img" aria-label="Daily rainfall time series with extreme thresholds"></canvas><div class="chart-foot" id="rain-caption">Start a simulation to populate the chart.</div></section>
-        <section class="panel chart-panel timeline-panel"><div class="panel-heading"><div><h2>Occurrence timeline</h2><p>Wet and dry states by date</p></div><div class="legend"><span><i class="blue"></i>Wet</span><span><i class="dry"></i>Dry</span><span><i class="amber"></i>P95</span><span><i class="red"></i>P99</span></div></div><canvas id="state-chart" role="img" aria-label="Wet and dry occurrence timeline"></canvas></section>
-        <section class="panel chart-panel"><div class="panel-heading"><div><h2>Cumulative rainfall</h2><p>Accumulated precipitation · mm</p></div><div class="legend"><span><i class="blue"></i>Total rainfall</span></div></div><canvas id="total-chart" role="img" aria-label="Cumulative rainfall over time"></canvas></section>
-        <div class="detail-grid">
-          <section class="panel"><div class="panel-heading"><h2>Analytical risk</h2><span class="tag">Model expectation</span></div><p class="muted">Horizon-average risk, same calendar and preceding state. Not a single-trajectory frequency.</p><table class="risk-table"><thead><tr><th>Threshold</th><th>Baseline</th><th>Scenario</th><th>Change</th></tr></thead><tbody id="risk-body"></tbody></table><p class="help" id="risk-summary"></p></section>
-          <section class="panel"><div class="panel-heading"><h2>Active parameters</h2><span class="tag" id="season-tag">NEM</span></div><p class="muted" id="parameter-date"></p><div class="matrix" id="matrix"></div><div class="parameter-row" id="gamma-info"></div></section>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Explore calibrated stochastic rainfall occurrence, intensity and extreme events in Colombo.">
+    <title>Colombo Rainfall Simulator</title>
+    <!-- Use local, relative assets for direct-file and GitHub Pages execution. Load the frozen model before the simulator. -->
+    <link rel="stylesheet" href="style.css">
+    <script src="model-parameters.js" defer></script>
+    <script src="script.js" defer></script>
+  </head>
+  <body>
+    <!-- Project identity and accessible page navigation. -->
+    <header class="topbar">
+      <div class="brand"><svg width="38" height="38" viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="11" fill="#173a58"/><path d="M8 22a7 7 0 0 1 4-12 9 9 0 0 1 16 3 5 5 0 1 1 1 9H8Z" fill="none" stroke="#82caff" stroke-width="2" stroke-linejoin="round"/><path d="m13 27-2 5m10-5-2 5m10-5-2 5" stroke="#82caff" stroke-width="2" stroke-linecap="round"/></svg><div><span class="brand-title">Colombo Rainfall Simulator</span><span class="brand-sub">STOCHASTIC RAINFALL LAB</span></div>
+      </div>
+      <nav aria-label="Page navigation"><a href="#dashboard">Dashboard</a><a href="#about">Method &amp; guide</a><a href="https://github.com/DilaraLiyanage/colombo-rainfall-simulator">Repository ↗</a></nav>
+    </header>
+    <main id="dashboard">
+      <div class="hero">
+        <div>
+          <div class="eyebrow">COLOMBO, SRI LANKA / DAILY MODEL</div>
+          <h1>Rainfall, occurrence &amp; extremes</h1>
+          <p>Explore how rainfall persistence and intensity change extreme-event risk.</p>
         </div>
+        <div class="calibration"><span class="dot"></span><div><strong>Calibrated model</strong><small id="cal-period"></small></div>
+        </div>
+      </div>
+      <div id="fatal" role="alert" hidden></div>
+      <div class="workspace">
+        <!-- Scenario inputs are locked after starting; the animation speed remains adjustable. -->
+        <aside class="panel controls" aria-labelledby="controls-heading">
+          <div class="panel-heading">
+            <h2 id="controls-heading">Simulation controls</h2><span class="tag">Seeded</span></div>
+          <div class="actions">
+            <button id="start" class="primary">Start</button>
+            <button id="pause" disabled>Pause</button>
+            <button id="resume" disabled>Resume</button>
+            <button id="reset">Reset</button>
+            <button id="instant" class="wide">Run instantly ↗</button>
+          </div>
+          <!-- Labels are associated with control IDs; the legend remains available to assistive technology. -->
+          <fieldset id="scenario-fields"><legend class="sr-only">Scenario parameters</legend>
+            <label for="model">Rainfall model</label>
+            <select id="model">
+              <option value="seasonal">Seasonal · four seasons</option>
+              <option value="homogeneous">Homogeneous · constant</option>
+            </select>
+            <label for="preset">Scenario preset</label>
+            <select id="preset">
+              <option value="baseline">Calibrated baseline</option>
+              <option value="intense">Increased intensity (+20%)</option>
+              <option value="persistent">Increased persistence (+20%)</option>
+              <option value="mild">Reduced intensity (−20%)</option>
+              <option value="combined">Persistence + intensity (+20%)</option>
+              <option value="custom">Custom</option>
+            </select>
+            <div class="field-grid">
+              <div>
+                <label for="start-date">Start date</label>
+                <input id="start-date" type="date" value="2021-01-01" min="1900-01-01" max="2099-12-31" required></div>
+              <div>
+                <label for="duration">Duration (days)</label>
+                <input id="duration" type="number" value="365" min="1" max="3650" step="1" required></div>
+            </div>
+            <label for="origin">Preceding day's state</label>
+            <select id="origin">
+              <option value="1">Wet</option>
+              <option value="0">Dry</option>
+            </select>
+            <div class="rule"></div>
+            <div class="small-title">Sensitivity multipliers</div>
+            <label class="range-label" for="k01">Dry → wet odds <output id="k01-value">1.00×</output></label>
+            <input id="k01" type="range" min="0.8" max="1.2" step="0.05" value="1">
+            <label class="range-label" for="k11">Wet → wet odds <output id="k11-value">1.00×</output></label>
+            <input id="k11" type="range" min="0.8" max="1.2" step="0.05" value="1">
+            <label class="range-label" for="kb">Gamma intensity scale <output id="kb-value">1.00×</output></label>
+            <input id="kb" type="range" min="0.8" max="1.2" step="0.05" value="1">
+            <div class="range-ends"><span>0.8×</span><span>1.2×</span></div>
+            <p class="help">Odds changes are relative, not percentage-point changes. Shape and extreme thresholds stay fixed.</p>
+            <label for="seed">Random seed (unsigned 32-bit)</label>
+            <input id="seed" type="number" min="0" max="4294967295" step="1" value="42" required>
+          </fieldset>
+          <label for="speed">Animation speed</label>
+          <select id="speed">
+            <option value="10">10 days / sec</option>
+            <option value="30" selected>30 days / sec</option>
+            <option value="120">120 days / sec</option>
+            <option value="365">365 days / sec</option>
+          </select>
+          <p class="help" id="lock-note">Reset to change a scenario after starting. Speed remains adjustable.</p>
+        </aside>
+        <section class="results" aria-label="Simulation results">
+          <div class="panel status-panel">
+            <div class="status-main"><span id="status" class="status" role="status">Ready</span><div class="current-date" id="current-date">—</div>
+              <div class="muted" id="progress-text">0 / 365 days</div>
+            </div>
+            <div class="current"><span class="muted">Current daily rainfall</span><strong id="current-rain">—</strong><span id="current-state" class="state-tag">Not started</span></div>
+            <progress id="progress" value="0" max="365" aria-label="Simulation progress"></progress>
+          </div>
+          <!-- JavaScript fills this container with trajectory statistics; it does not contain fabricated initial values. -->
+          <div class="metrics" id="metrics" aria-label="Calculated trajectory statistics"></div>
+          <!-- Live scientific charts have labelled Canvas elements and visible units/legends. -->
+          <section class="panel chart-panel">
+            <div class="panel-heading">
+              <div>
+                <h2>Daily rainfall</h2>
+                <p>Simulated precipitation · mm/day</p>
+              </div>
+              <div class="legend"><span><i class="blue"></i>Rainfall</span><span><i class="amber"></i>P95</span><span><i class="red"></i>P99</span></div>
+            </div>
+            <canvas id="rain-chart" role="img" aria-label="Daily rainfall time series with extreme thresholds"></canvas>
+            <div class="chart-foot" id="rain-caption">Start a simulation to populate the chart.</div>
+          </section>
+          <section class="panel chart-panel timeline-panel">
+            <div class="panel-heading">
+              <div>
+                <h2>Occurrence timeline</h2>
+                <p>Wet and dry states by date</p>
+              </div>
+              <div class="legend"><span><i class="blue"></i>Wet</span><span><i class="dry"></i>Dry</span><span><i class="amber"></i>P95</span><span><i class="red"></i>P99</span></div>
+            </div>
+            <canvas id="state-chart" role="img" aria-label="Wet and dry occurrence timeline"></canvas>
+          </section>
+          <section class="panel chart-panel">
+            <div class="panel-heading">
+              <div>
+                <h2>Cumulative rainfall</h2>
+                <p>Accumulated precipitation · mm</p>
+              </div>
+              <div class="legend"><span><i class="blue"></i>Total rainfall</span></div>
+            </div>
+            <canvas id="total-chart" role="img" aria-label="Cumulative rainfall over time"></canvas>
+          </section>
+          <!-- Separate analytical expectations from realised statistics and show active destination-date parameters. -->
+          <div class="detail-grid">
+            <section class="panel">
+              <div class="panel-heading">
+                <h2>Analytical risk</h2><span class="tag">Model expectation</span></div>
+              <p class="muted">Horizon-average risk, same calendar and preceding state. Not a single-trajectory frequency.</p>
+              <table class="risk-table">
+                <thead>
+                  <tr>
+                    <th>Threshold</th>
+                    <th>Baseline</th>
+                    <th>Scenario</th>
+                    <th>Change</th>
+                  </tr>
+                </thead>
+                <tbody id="risk-body"></tbody>
+              </table>
+              <p class="help" id="risk-summary"></p>
+            </section>
+            <section class="panel">
+              <div class="panel-heading">
+                <h2>Active parameters</h2><span class="tag" id="season-tag">NEM</span></div>
+              <p class="muted" id="parameter-date"></p>
+              <div class="matrix" id="matrix"></div>
+              <div class="parameter-row" id="gamma-info"></div>
+            </section>
+          </div>
+        </section>
+      </div>
+      <!-- Scientific method, usage guidance, limitations and executable model verification. -->
+      <section id="about" class="about panel">
+        <div class="eyebrow">SCIENTIFIC BACKGROUND</div>
+        <h2>How to interpret the simulator</h2>
+        <div class="about-grid">
+          <article>
+            <h3>Research question &amp; data</h3>
+            <p>How do rainfall occurrence patterns and intensity influence the probability of extreme rainfall events in Colombo? The model uses Open-Meteo Best Match hourly precipitation (2001–2025), reconstructed into daily totals. Calibration uses 2001–2020; historical evaluation uses 2021–2025. Data are CC BY 4.0; the underlying model composition and acquisition provenance are uncertain.</p>
+          </article>
+          <article>
+            <h3>Occurrence and intensity</h3>
+            <p>A two-state Markov chain draws wet/dry occurrence from the preceding state. Wet amounts use a Gamma distribution conditioned on rainfall ≥ 0.1 mm, sampled by rejection rather than clipping. Seasonal models select parameters by destination date (NEM Dec–Feb, FIM Mar–Apr, SWM May–Sep, SIM Oct–Nov), retaining the previous state across boundaries.</p>
+          </article>
+          <article>
+            <h3>Using the dashboard</h3>
+            <p>Choose a model, calendar, duration, scenario and seed. Start animates the trajectory; Pause and Resume preserve state; Run instantly completes the remaining days. Reset clears results and unlocks controls. The same configuration and seed reproduce a trajectory in this JavaScript implementation. Longest spells include observed partial endpoint runs.</p>
+          </article>
+          <article>
+            <h3>Extreme-event interpretation</h3>
+            <p>P95 and P99 are fixed all-day calibration thresholds; an event must strictly exceed the threshold. Marginal risk = wet probability × conditional tail probability. Within the investigated ±20% range, conditional intensity has the strongest influence on marginal risk; persistence affects clustering. Analytical risk averages time-dependent model probabilities, not uncertainty intervals for a single trajectory.</p>
+          </article>
+          <article>
+            <h3>Scientific limitations</h3>
+            <p>This is not an operational weather forecast. Rainfall exceedance probability is not flood probability. Scenario perturbations are not climate projections or causal interventions. Historical reanalysis and hourly/daily aggregation conventions carry uncertainty; Gamma underestimates some historical upper-tail rainfall and first-order occurrence misses exceptionally long spells. Seasonal modelling improves climatology, not every extreme statistic.</p>
+          </article>
+          <article>
+            <h3>Verification</h3>
+            <p>The Python notebook is the scientific source of truth. The browser uses its generated parameter asset, a seeded JavaScript generator and independent analytical comparisons. JavaScript and NumPy random streams are different; compare distributions and expectations, not individual sequences.</p>
+            <button id="verify">Run model verification</button>
+            <p id="verification-status" role="status" class="help">Runs deterministic checks and independent Monte Carlo ensembles.</p>
+          </article>
+        </div>
+        <div id="verification-output" hidden></div>
       </section>
-    </div>
-    <section id="about" class="about panel"><div class="eyebrow">SCIENTIFIC BACKGROUND</div><h2>How to interpret the simulator</h2><div class="about-grid">
-      <article><h3>Research question &amp; data</h3><p>How do rainfall occurrence patterns and intensity influence the probability of extreme rainfall events in Colombo? The model uses Open-Meteo Best Match hourly precipitation (2001–2025), reconstructed into daily totals. Calibration uses 2001–2020; historical evaluation uses 2021–2025. Data are CC BY 4.0; the underlying model composition and acquisition provenance are uncertain.</p></article>
-      <article><h3>Occurrence and intensity</h3><p>A two-state Markov chain draws wet/dry occurrence from the preceding state. Wet amounts use a Gamma distribution conditioned on rainfall ≥ 0.1 mm, sampled by rejection rather than clipping. Seasonal models select parameters by destination date (NEM Dec–Feb, FIM Mar–Apr, SWM May–Sep, SIM Oct–Nov), retaining the previous state across boundaries.</p></article>
-      <article><h3>Using the dashboard</h3><p>Choose a model, calendar, duration, scenario and seed. Start animates the trajectory; Pause and Resume preserve state; Run instantly completes the remaining days. Reset clears results and unlocks controls. The same configuration and seed reproduce a trajectory in this JavaScript implementation. Longest spells include observed partial endpoint runs.</p></article>
-      <article><h3>Extreme-event interpretation</h3><p>P95 and P99 are fixed all-day calibration thresholds; an event must strictly exceed the threshold. Marginal risk = wet probability × conditional tail probability. Within the investigated ±20% range, conditional intensity has the strongest influence on marginal risk; persistence affects clustering. Analytical risk averages time-dependent model probabilities, not uncertainty intervals for a single trajectory.</p></article>
-      <article><h3>Scientific limitations</h3><p>This is not an operational weather forecast. Rainfall exceedance probability is not flood probability. Scenario perturbations are not climate projections or causal interventions. Historical reanalysis and hourly/daily aggregation conventions carry uncertainty; Gamma underestimates some historical upper-tail rainfall and first-order occurrence misses exceptionally long spells. Seasonal modelling improves climatology, not every extreme statistic.</p></article>
-      <article><h3>Verification</h3><p>The Python notebook is the scientific source of truth. The browser uses its generated parameter asset, a seeded JavaScript generator and independent analytical comparisons. JavaScript and NumPy random streams are different; compare distributions and expectations, not individual sequences.</p><button id="verify">Run model verification</button><p id="verification-status" role="status" class="help">Runs deterministic checks and independent Monte Carlo ensembles.</p></article>
-    </div><div id="verification-output" hidden></div></section>
-    <footer><span>Colombo Rainfall Simulator · MIT code · Open-Meteo data CC BY 4.0</span><a href="https://open-meteo.com/en/license">Data attribution ↗</a></footer>
-  </main>
-</body>
+      <footer><span>Colombo Rainfall Simulator · MIT code · Open-Meteo data CC BY 4.0</span><a href="https://open-meteo.com/en/license">Data attribution ↗</a></footer>
+    </main>
+  </body>
 </html>
