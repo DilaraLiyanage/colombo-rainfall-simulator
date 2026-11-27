@@ -1,6 +1,6 @@
 # Colombo Rainfall Simulator
 
-A developing stochastic daily rainfall generator for exploring rainfall variability and persistence in Colombo, Sri Lanka.
+A calibrated stochastic daily rainfall generator for exploring rainfall variability and persistence in Colombo, Sri Lanka.
 
 [Live demo (pending deployment)](https://dilaraliyanage.github.io/colombo-rainfall-simulator/) · [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/DilaraLiyanage/colombo-rainfall-simulator/blob/main/notebook/colombo-rainfall-simulator.ipynb)
 
@@ -12,7 +12,11 @@ How do rainfall occurrence patterns and intensity influence the probability of e
 
 ## Quick start
 
-Open the notebook using the badge after publication, then select Runtime → Run all. The notebook loads immutable snapshots from `data/raw/`, validates and preprocesses them, writes CSVs to `data/processed/` and figures to `figures/`. See [data instructions](data/README.md). No simulation runs. The notebook installs the four pinned scientific dependencies from its C01 configuration (matching `requirements.txt`). Open `docs/index.html` locally or use the live link after deployment. Two independent local kernels completed in 11.84 s and 11.57 s (including kernel startup; dependencies already installed). All 31 generated files were byte-identical between runs. Fresh Colab installation and remote retrieval remain untested. See [output manifest](data/processed/output_manifest.csv) and [runtime versions](data/processed/runtime_versions.csv).
+Open the notebook using the badge after publication, then select Runtime → Run all. The notebook retrieves immutable snapshots from `data/raw/`, checks their SHA-256 values, reconstructs rainfall, calibrates all parameters, runs independent Monte Carlo verification and convergence experiments, evaluates the historical holdout, and regenerates all scientific outputs. No existing processed CSV, fitted parameters or figures are inputs. See [data instructions](data/README.md), [manifest](data/processed/output_manifest.csv) and [figure inventory](figures/README.md).
+
+C01 checks the four scientific pins in `requirements.txt`. With matching installed and loaded versions it runs directly. If scientific imports are stale it starts a fresh interpreter; if installed versions differ it creates a temporary environment and installs exact pins there, then starts a fresh worker. The `%%scientific` cell magic dispatches cells to the appropriate interpreter and forwards tables and figures. No manual session restart is intended. Scientific imports and installed versions must match the pins. Local tests used already-installed dependencies; the fresh-install branch and remote retrieval in Colab remain unverified. A new interactive cell can start with `%%scientific` to inspect the scientific namespace.
+
+Two local notebook runs (direct and fresh worker) completed in 50.13 s and 49.57 s including kernel startup; all 50 non-timing outputs were byte-identical. The two timing files differed as expected. Python 3.13.5 and the pinned scientific dependencies were used. See [runtime versions](data/processed/runtime_versions.csv) and [execution runtime](data/processed/execution_runtime.csv). The browser status page remains a placeholder.
 
 ## Using the demo
 
@@ -24,15 +28,17 @@ The calibrated homogeneous first-order occurrence model uses $P_{ij}=P(S_t=j\mid
 
 ## Verification
 
-Preprocessing, transition probability and stationary-distribution assertions, density normalisation and analytical quadrature checks passed locally. See [transition matrix](figures/F08_transition_matrix.png). Monte Carlo verification and independent Colab execution remain pending.
+Preprocessing, calibration and quadrature assertions passed. All 21 deterministic/domain/reproducibility checks passed, and all seven stationary analytical benchmarks passed the four-MCSE tolerance using 600 independent 3,650-day trajectories. See [simulation checks](data/processed/simulation_verification.csv), [analytical comparisons](data/processed/monte_carlo_analytical.csv), [F16](figures/F16_analytical_verification.png) and [F17](figures/F17_convergence.png). Twenty independent batches at each of six replication counts yielded log-log RMSE slopes of −0.573 (wet probability), −0.484 (mean rainfall) and −0.471 (P95 exceedance). This verifies the numerical implementation, not the real-world adequacy of the model. Independent fresh Colab testing remains pending.
 
 ## Concepts applied
 
-Planned concepts: stochastic processes for occurrence, conditional probability for transitions, random variate generation for amounts, Monte Carlo replication for uncertainty, parameter estimation and statistical model verification.
+Concepts: stochastic processes for occurrence, conditional probability for transitions, random variate generation for amounts, Monte Carlo replication for uncertainty, parameter estimation and statistical model verification.
 
 ## Results, limitations and future work
 
-Historical preprocessing, exploratory analysis and calibration are complete locally; simulation results are pending. First-order BIC is 4046.67 versus 5922.57 for independent occurrence. Gamma has the lowest AIC/BIC among the compared distributions; its stationary wet probability is 0.860077 and model daily exceedance probability at 25.2 mm is 0.054483. The P99 tail is underestimated. Gridded reanalysis may differ from local gauge measurements; short-memory models may miss persistent events and heavy tails. Use Open-Meteo Best Match hourly data, a 0.1 mm wet-day threshold, a Gamma baseline and strict exceedance of the calibration all-day P95 (25.2 mm). Calibration is 2001–2020; evaluation is 2021–2025. Evaluate seasonal and tail behaviour before release.
+The Gamma baseline gives the lowest AIC/BIC among the compared wet-day distributions, but underestimates the far upper tail. The stationary analytical P95 risk is 5.4483%; the Monte Carlo estimate is 5.4398%. The independent 2021–2025 holdout ensemble (1,000 five-year trajectories, initialised from the final calibration state) estimates P95 frequency at 5.4338% versus 8.1599% historically, outside the 95% prediction interval of 4.4359–6.4622%. Historical mean daily rainfall and wet frequency also exceed their simulated intervals. The historical maximum complete wet spell is 254 days versus a simulated 95% interval of 56–142 days. Seasonal means and risks are not reproduced by the homogeneous model; no holdout values were used to refit parameters. See [holdout comparisons](data/processed/holdout_comparison.csv), [F20](figures/F20_monthly_holdout.png) and [F23](figures/F23_holdout_intervals.png).
+
+The model separates occurrence from conditional intensity: $P(R>u)=\pi_1P(X>u\mid S=1)$. Dependence affects clustering, and Gamma parameters affect wet-day tail risk. This is a marginal-risk decomposition, not a causal finding. Prediction intervals describe trajectory variability; confidence intervals quantify Monte Carlo uncertainty conditional on fitted parameters. Reanalysis, parameter and structural uncertainty are not included. The 0.1 mm wet threshold, calibration all-day P95/P99, calibration/evaluation split and midnight correction remain unchanged. Best Match provenance and the aggregation discrepancy are unresolved. This simulator is neither a deterministic weather forecast nor a flood prediction system. Seasonal simulation, sensitivity experiments and the interactive browser simulator remain future work.
 
 ## Key references
 
@@ -45,7 +51,7 @@ Full list: [REFERENCES.md](REFERENCES.md).
 
 ## AI assistance
 
-AI assisted with the initial scaffold, literature summaries, preprocessing, exploratory analysis, path corrections, calibration, likelihood diagnostics and analytical checks. Author review, modifications and verification are pending.
+AI assisted with the initial scaffold, literature summaries, preprocessing, exploratory analysis, path corrections, calibration, likelihood diagnostics, analytical checks, homogeneous simulation, convergence, holdout evaluation and dependency bootstrap corrections. Author review, modifications and independent verification of this update remain pending.
 
 ## Licence and credits
 

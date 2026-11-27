@@ -12,7 +12,7 @@ data/processed/distribution_quantiles.csv,C12,distribution quantiles
 data/processed/distribution_tail_errors.csv,C12,distribution tail errors
 data/processed/analytical_benchmarks.csv,C13,analytical benchmarks
 data/processed/seasonal_parameters.csv,C14,seasonal parameters
-data/processed/output_manifest.csv,C16,output manifest
+data/processed/output_manifest.csv,C23,output manifest
 data/processed/runtime_versions.csv,C16,runtime versions
 figures/F01_daily_rainfall.png,C08,daily rainfall
 figures/F02_monthly_climatology.png,C08,monthly climatology
@@ -28,5 +28,26 @@ figures/F11_fitted_cdfs.png,C15,fitted cdfs
 figures/F12_distribution_qq.png,C15,distribution qq
 figures/F13_upper_tail.png,C15,upper tail
 figures/F14_seasonal_transitions.png,C15,seasonal transitions
-data/processed/figure_data.json,C16,Numerical plotting primitives for regression comparison
+data/processed/figure_data.json,C23,Numerical plotting primitives for regression comparison
 data/processed/model_parameters.json,C16,Calibrated homogeneous and seasonal model parameters for future consumers
+data/processed/simulation_verification.csv,C18,simulation verification.csv
+data/processed/monte_carlo_analytical.csv,C19,monte carlo analytical.csv
+data/processed/annual_simulation_uncertainty.csv,C19,annual simulation uncertainty.csv
+data/processed/convergence_batches.csv,C20,convergence batches.csv
+data/processed/convergence_results.csv,C20,convergence results.csv
+data/processed/convergence_slopes.csv,C20,convergence slopes.csv
+data/processed/convergence_timing.csv,C20,convergence timing.csv
+data/processed/holdout_comparison.csv,C21,holdout comparison.csv
+data/processed/holdout_trajectory_statistics.csv,C21,holdout trajectory statistics.csv
+data/processed/holdout_aggregate_errors.csv,C21,holdout aggregate errors.csv
+data/processed/simulation_config.json,C23,simulation config.json
+data/processed/execution_runtime.csv,C23,execution runtime.csv
+figures/F15_synthetic_trajectory.png,C22,F15 synthetic trajectory
+figures/F16_analytical_verification.png,C22,F16 analytical verification
+figures/F17_convergence.png,C22,F17 convergence
+figures/F18_ci_width.png,C22,F18 ci width
+figures/F19_annual_holdout.png,C22,F19 annual holdout
+figures/F20_monthly_holdout.png,C22,F20 monthly holdout
+figures/F21_extreme_holdout.png,C22,F21 extreme holdout
+figures/F22_spell_holdout.png,C22,F22 spell holdout
+figures/F23_holdout_intervals.png,C22,F23 holdout intervals

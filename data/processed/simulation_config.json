@@ -1,0 +1,29 @@
+{
+  "seed": 42,
+  "verification_reps": 600,
+  "verification_days": 3650,
+  "counts": [
+    25,
+    50,
+    100,
+    250,
+    500,
+    1000
+  ],
+  "batches": 20,
+  "convergence_days": 365,
+  "holdout_reps": 1000,
+  "annual_reps": 1000,
+  "sigma": 4,
+  "confidence": 0.95,
+  "primary_threshold_mm": 25.2,
+  "secondary_threshold_mm": 46.296,
+  "holdout_initial_state": 1,
+  "stream_namespaces": {
+    "tests": 0,
+    "verification": 1,
+    "convergence": 2,
+    "holdout": 3,
+    "annual": 4
+  }
+}

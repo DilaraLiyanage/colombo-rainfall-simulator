@@ -1,0 +1,22 @@
+test,outcome
+dimensions,PASS
+bounds,PASS
+row sums,PASS
+invalid Gamma rejected,PASS
+absorbing 0,PASS
+absorbing 1,PASS
+nonunique stationary rejected,PASS
+alternation,PASS
+Bernoulli identical rows,PASS
+output dimensions,PASS
+binary states,PASS
+finite nonnegative amounts,PASS
+dry zero and wet support,PASS
+same seed,PASS
+different seed,PASS
+distinct child streams,PASS
+known spells,PASS
+strict exceedance,PASS
+inverse survival identity and support,PASS
+unique absorbing stationary law,PASS
+periodic stationary law,PASS

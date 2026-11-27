@@ -52,3 +52,17 @@ Thumbs.db
 
 !/data/processed/figure_data.json
 !/data/processed/model_parameters.json
+
+# Homogeneous simulation and validation outputs
+!/data/processed/simulation_verification.csv
+!/data/processed/monte_carlo_analytical.csv
+!/data/processed/annual_simulation_uncertainty.csv
+!/data/processed/convergence_batches.csv
+!/data/processed/convergence_results.csv
+!/data/processed/convergence_slopes.csv
+!/data/processed/convergence_timing.csv
+!/data/processed/holdout_comparison.csv
+!/data/processed/holdout_trajectory_statistics.csv
+!/data/processed/holdout_aggregate_errors.csv
+!/data/processed/simulation_config.json
+!/data/processed/execution_runtime.csv
