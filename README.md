@@ -8,11 +8,11 @@ A planned stochastic daily rainfall generator for exploring rainfall variability
 
 ## The problem
 
-How well can a stochastic daily rainfall generator reproduce Colombo’s seasonal rainfall, wet and dry spells, and extreme-event frequency relative to a selected historical reference series? Synthetic sequences may support exploratory risk analysis, but are not operational forecasts.
+How do rainfall occurrence patterns and intensity influence the probability of extreme rainfall events in Colombo? Synthetic sequences may support exploratory risk analysis, but are not operational forecasts.
 
 ## Quick start
 
-Open the notebook using the badge after publication, then select Runtime → Run all. The current scaffold only reports readiness; no simulation runs. Open `docs/index.html` locally or use the live link after deployment. Runtime benchmarking is pending.
+Open the notebook using the badge after publication, then select Runtime → Run all. The notebook loads immutable snapshots from `data/raw/`, validates and preprocesses them, writes CSVs to `data/processed/` and figures to `figures/`. See [data instructions](data/README.md). No simulation runs. Open `docs/index.html` locally or use the live link after deployment. Runtime benchmarking is pending.
 
 ## Using the demo
 
@@ -32,7 +32,7 @@ Planned concepts: stochastic processes for occurrence, conditional probability f
 
 ## Results, limitations and future work
 
-Results are pending. Gridded reanalysis may differ from local gauge measurements; short-memory models may miss persistent events and heavy tails. Select the dataset, wet-day threshold, amount formulation and extreme threshold before calibration. Evaluate seasonal and tail behaviour before release.
+Historical preprocessing and exploratory analysis are complete locally; simulation results are pending. Gridded reanalysis may differ from local gauge measurements; short-memory models may miss persistent events and heavy tails. Use Open-Meteo Best Match hourly data, a 0.1 mm wet-day threshold, a Gamma baseline and strict exceedance of the calibration all-day P95 (25.2 mm). Calibration is 2001–2020; evaluation is 2021–2025. Evaluate seasonal and tail behaviour before release.
 
 ## Key references
 
@@ -45,8 +45,8 @@ Full list: [REFERENCES.md](REFERENCES.md).
 
 ## AI assistance
 
-AI assisted with the initial scaffold and literature summaries. Author review, modifications and verification are pending.
+AI assisted with the initial scaffold, literature summaries, preprocessing, exploratory analysis and path corrections. Author review, modifications and verification are pending.
 
 ## Licence and credits
 
-Code: [MIT](LICENSE). Dataset attribution and redistribution status: [data/README.md](data/README.md). No dataset is bundled.
+Code: [MIT](LICENSE). Dataset attribution and redistribution status: [data/README.md](data/README.md). Weather data are separately licensed under CC BY 4.0; see source credits and provenance limitations before redistribution.
