@@ -1,11 +1,39 @@
+
+# Python
 __pycache__/
-.ipynb_checkpoints/
+*.pyc
 .venv/
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Environment variables
 .env
 .env.*
-*.pyc
+
+# Operating system files
 .DS_Store
+Thumbs.db
+
+# Data management
 /data/*
 !/data/README.md
+
+# Raw datasets
+!/data/raw/
+/data/raw/*
+!/data/raw/open-meteo-6.92N79.91E4m-hourly.csv
+!/data/raw/open-meteo-6.92N79.91E4m-daily.csv
+
+# Processed datasets
+!/data/processed/
+/data/processed/*
+!/data/processed/processed_daily.csv
+!/data/processed/calibration_daily.csv
+!/data/processed/evaluation_daily.csv
+!/data/processed/summary.csv
+!/data/processed/aggregation_metrics.csv
+
+# Documents and archives
 *.pdf
 *.zip
