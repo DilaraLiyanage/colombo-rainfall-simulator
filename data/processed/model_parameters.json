@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "calibration_start": "2001-01-01",
+  "calibration_end": "2020-12-31",
+  "seed": 42,
+  "wet_threshold_mm": 0.1,
+  "extreme_threshold_mm": 25.2,
+  "secondary_threshold_mm": 46.296,
+  "state_order": [
+    "dry",
+    "wet"
+  ],
+  "homogeneous": {
+    "transition_matrix": [
+      [
+        0.6555772994129159,
+        0.34442270058708413
+      ],
+      [
+        0.05603311047437122,
+        0.9439668895256288
+      ]
+    ],
+    "stationary_distribution": [
+      0.13992332968236584,
+      0.8600766703176342
+    ],
+    "amount_distribution": {
+      "name": "lower_truncated_gamma",
+      "shape": 0.7088471650802681,
+      "scale_mm": 11.343818927913457,
+      "lower_mm": 0.1,
+      "parent_location_mm": 0
+    }
+  },
+  "seasonal": {
+    "NEM": {
+      "transition_matrix": [
+        [
+          0.7275064267352185,
+          0.27249357326478146
+        ],
+        [
+          0.20565302144249512,
+          0.7943469785575049
+        ]
+      ],
+      "amount_distribution": {
+        "name": "lower_truncated_gamma",
+        "shape": 0.25818586606516325,
+        "scale_mm": 16.126727922404122,
+        "lower_mm": 0.1,
+        "parent_location_mm": 0
+      }
+    },
+    "FIM": {
+      "transition_matrix": [
+        [
+          0.42857142857142855,
+          0.5714285714285714
+        ],
+        [
+          0.0603290676416819,
+          0.9396709323583181
+        ]
+      ],
+      "amount_distribution": {
+        "name": "lower_truncated_gamma",
+        "shape": 0.470697438784966,
+        "scale_mm": 10.715368156469912,
+        "lower_mm": 0.1,
+        "parent_location_mm": 0
+      }
+    },
+    "SWM": {
+      "transition_matrix": [
+        [
+          0.2564102564102564,
+          0.7435897435897436
+        ],
+        [
+          0.009930486593843098,
+          0.9900695134061569
+        ]
+      ],
+      "amount_distribution": {
+        "name": "lower_truncated_gamma",
+        "shape": 1.1669201803582214,
+        "scale_mm": 7.233505267316994,
+        "lower_mm": 0.1,
+        "parent_location_mm": 0
+      }
+    },
+    "SIM": {
+      "transition_matrix": [
+        [
+          0.5063291139240507,
+          0.4936708860759494
+        ],
+        [
+          0.03943908851884312,
+          0.9605609114811569
+        ]
+      ],
+      "amount_distribution": {
+        "name": "lower_truncated_gamma",
+        "shape": 0.7954736895573772,
+        "scale_mm": 15.70592990847086,
+        "lower_mm": 0.1,
+        "parent_location_mm": 0
+      }
+    }
+  }
+}

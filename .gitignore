@@ -33,7 +33,22 @@ Thumbs.db
 !/data/processed/evaluation_daily.csv
 !/data/processed/summary.csv
 !/data/processed/aggregation_metrics.csv
+!/data/processed/markov_transitions.csv
+!/data/processed/occurrence_bic.csv
+!/data/processed/spell_statistics.csv
+!/data/processed/distribution_fits.csv
+!/data/processed/distribution_quantiles.csv
+!/data/processed/distribution_tail_errors.csv
+!/data/processed/analytical_benchmarks.csv
+!/data/processed/seasonal_parameters.csv
 
 # Documents and archives
 *.pdf
 *.zip
+
+!/data/processed/output_manifest.csv
+
+!/data/processed/runtime_versions.csv
+
+!/data/processed/figure_data.json
+!/data/processed/model_parameters.json

@@ -37,4 +37,23 @@ Weather data by Open-Meteo (https://open-meteo.com/), licensed under [CC BY 4.0]
 
 ## Reproduction
 
-After reviewing source credits, place both unchanged source snapshots in `data/raw/` in the public repository. The notebook attempts raw GitHub URLs under `main/data/raw/` first, then local `data/raw/`, the output root’s `data/raw/`, or `../data/raw/`. Set `RAINFALL_DATA_DIR` to an existing raw directory to explicitly select local execution. Both downloaded and local snapshots are checked against the SHA-256 values above. Outputs are written to `data/processed/` and root-level `figures/` under the output root; required directories are created automatically. No interactive upload is required. Keep the raw files immutable; use the original supplied snapshots. Output root defaults to the working directory and can be set with `RAINFALL_OUTPUT_DIR`. Run all cells in order with numpy, pandas and matplotlib available.
+After reviewing source credits, place both unchanged source snapshots in `data/raw/` in the public repository. The notebook attempts raw GitHub URLs under `main/data/raw/` first, then local `data/raw/`, the output root’s `data/raw/`, or `../data/raw/`. Set `RAINFALL_DATA_DIR` to an existing raw directory to explicitly select local execution. Both downloaded and local snapshots are checked against the SHA-256 values above. Outputs are written to `data/processed/` and root-level `figures/` under the output root; required directories are created automatically. No interactive upload is required. Keep the raw files immutable; use the original supplied snapshots. Output root defaults to the working directory and can be set with `RAINFALL_OUTPUT_DIR`. Run all cells in order; C01 installs the pinned scientific packages if required and validates imported versions.
+
+## Calibration outputs
+
+All new tables use 2001–2020 only and inherit the attribution above. Shape means Gamma alpha or log-normal sigma; scale is in mm (log-normal scale = exp(mu)); exponential shape is blank. Probabilities are fractions, not percentages. The fixed wet threshold is 0.1 mm; P95/P99 thresholds remain 25.2/46.296 mm.
+
+- [markov_transitions.csv](processed/markov_transitions.csv): Four homogeneous transitions with counts and probabilities.
+- [occurrence_bic.csv](processed/occurrence_bic.csv): Conditional order-zero and order-one likelihood/BIC.
+- [spell_statistics.csv](processed/spell_statistics.csv): Complete empirical and geometric spell summaries.
+- [distribution_fits.csv](processed/distribution_fits.csv): Truncated distribution estimates, likelihood criteria and optimisation diagnostics.
+- [distribution_quantiles.csv](processed/distribution_quantiles.csv): Observed and fitted conditional P90/P95/P99.
+- [distribution_tail_errors.csv](processed/distribution_tail_errors.csv): Conditional tail probabilities and signed errors at fixed all-day thresholds.
+- [analytical_benchmarks.csv](processed/analytical_benchmarks.csv): Stationary analytical targets and calibration comparisons.
+- [seasonal_parameters.csv](processed/seasonal_parameters.csv): Destination-season transitions and truncated Gamma estimates.
+
+F08–F14 are calibration diagnostics in root-level `figures/`. Raw snapshots and original processed data remain unchanged.
+
+## Reproducible output inventory
+
+[output_manifest.csv](processed/output_manifest.csv) lists all 31 generated files and producing cells. [runtime_versions.csv](processed/runtime_versions.csv) records Python, scientific packages and kernel support versions. [figure_data.json](processed/figure_data.json) captures numerical plotting primitives; raster appearance can differ with fonts, backend and platform. [model_parameters.json](processed/model_parameters.json) exports calibrated model parameters and thresholds for future consumers, not a web implementation. Two separate local kernels regenerated all 31 files byte-identically; runtimes including startup were 11.84 and 11.57 seconds, with packages already installed. Fresh Colab installation and remote download have not been verified. Numerical comparisons across platforms should use rtol=1e-8, atol=1e-9 for scientific values, with optimiser diagnostics and fitted parameter differences reviewed separately; exact PNG equality is not required across platforms.

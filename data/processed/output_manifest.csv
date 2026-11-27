@@ -1,0 +1,32 @@
+path,cell,description
+data/processed/processed_daily.csv,C05,processed daily
+data/processed/calibration_daily.csv,C05,calibration daily
+data/processed/evaluation_daily.csv,C05,evaluation daily
+data/processed/summary.csv,C07,summary
+data/processed/aggregation_metrics.csv,C07,aggregation metrics
+data/processed/markov_transitions.csv,C09,markov transitions
+data/processed/occurrence_bic.csv,C09,occurrence bic
+data/processed/spell_statistics.csv,C10,spell statistics
+data/processed/distribution_fits.csv,C11,distribution fits
+data/processed/distribution_quantiles.csv,C12,distribution quantiles
+data/processed/distribution_tail_errors.csv,C12,distribution tail errors
+data/processed/analytical_benchmarks.csv,C13,analytical benchmarks
+data/processed/seasonal_parameters.csv,C14,seasonal parameters
+data/processed/output_manifest.csv,C16,output manifest
+data/processed/runtime_versions.csv,C16,runtime versions
+figures/F01_daily_rainfall.png,C08,daily rainfall
+figures/F02_monthly_climatology.png,C08,monthly climatology
+figures/F03_wet_day_histogram.png,C08,wet day histogram
+figures/F04_monthly_wet_frequency.png,C08,monthly wet frequency
+figures/F05_annual_rainfall.png,C08,annual rainfall
+figures/F06_seasonal_distributions.png,C08,seasonal distributions
+figures/F07_daily_aggregation_comparison.png,C08,daily aggregation comparison
+figures/F08_transition_matrix.png,C15,transition matrix
+figures/F09_spell_distributions.png,C15,spell distributions
+figures/F10_fitted_densities.png,C15,fitted densities
+figures/F11_fitted_cdfs.png,C15,fitted cdfs
+figures/F12_distribution_qq.png,C15,distribution qq
+figures/F13_upper_tail.png,C15,upper tail
+figures/F14_seasonal_transitions.png,C15,seasonal transitions
+data/processed/figure_data.json,C16,Numerical plotting primitives for regression comparison
+data/processed/model_parameters.json,C16,Calibrated homogeneous and seasonal model parameters for future consumers

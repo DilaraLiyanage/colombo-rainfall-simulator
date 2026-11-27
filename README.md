@@ -1,6 +1,6 @@
 # Colombo Rainfall Simulator
 
-A planned stochastic daily rainfall generator for exploring rainfall variability and persistence in Colombo, Sri Lanka.
+A developing stochastic daily rainfall generator for exploring rainfall variability and persistence in Colombo, Sri Lanka.
 
 [Live demo (pending deployment)](https://dilaraliyanage.github.io/colombo-rainfall-simulator/) · [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/DilaraLiyanage/colombo-rainfall-simulator/blob/main/notebook/colombo-rainfall-simulator.ipynb)
 
@@ -12,7 +12,7 @@ How do rainfall occurrence patterns and intensity influence the probability of e
 
 ## Quick start
 
-Open the notebook using the badge after publication, then select Runtime → Run all. The notebook loads immutable snapshots from `data/raw/`, validates and preprocesses them, writes CSVs to `data/processed/` and figures to `figures/`. See [data instructions](data/README.md). No simulation runs. Open `docs/index.html` locally or use the live link after deployment. Runtime benchmarking is pending.
+Open the notebook using the badge after publication, then select Runtime → Run all. The notebook loads immutable snapshots from `data/raw/`, validates and preprocesses them, writes CSVs to `data/processed/` and figures to `figures/`. See [data instructions](data/README.md). No simulation runs. The notebook installs the four pinned scientific dependencies from its C01 configuration (matching `requirements.txt`). Open `docs/index.html` locally or use the live link after deployment. Two independent local kernels completed in 11.84 s and 11.57 s (including kernel startup; dependencies already installed). All 31 generated files were byte-identical between runs. Fresh Colab installation and remote retrieval remain untested. See [output manifest](data/processed/output_manifest.csv) and [runtime versions](data/processed/runtime_versions.csv).
 
 ## Using the demo
 
@@ -20,11 +20,11 @@ The current page is a status screen. Simulation controls and outputs are intenti
 
 ## Model and mathematics
 
-A candidate occurrence model uses $P_{ij}=P(S_t=j\mid S_{t-1}=i)$ for dry/wet states, followed by conditional sampling of wet-day amounts. Model order and seasonal grouping require evaluation. See [THEORY.md](THEORY.md).
+The calibrated homogeneous first-order occurrence model uses $P_{ij}=P(S_t=j\mid S_{t-1}=i)$ for dry/wet states, followed by conditional sampling of wet-day amounts. Wet amounts use a lower-truncated Gamma baseline (shape 0.708847, scale 11.343819 mm); exponential and log-normal alternatives were compared. Seasonal parameters are prepared but not simulated. See [THEORY.md](THEORY.md).
 
 ## Verification
 
-Pending: transition probability checks, limiting cases and comparison with analytic or synthetic reference values. No checks of simulation correctness have been executed. Verification figure pending.
+Preprocessing, transition probability and stationary-distribution assertions, density normalisation and analytical quadrature checks passed locally. See [transition matrix](figures/F08_transition_matrix.png). Monte Carlo verification and independent Colab execution remain pending.
 
 ## Concepts applied
 
@@ -32,7 +32,7 @@ Planned concepts: stochastic processes for occurrence, conditional probability f
 
 ## Results, limitations and future work
 
-Historical preprocessing and exploratory analysis are complete locally; simulation results are pending. Gridded reanalysis may differ from local gauge measurements; short-memory models may miss persistent events and heavy tails. Use Open-Meteo Best Match hourly data, a 0.1 mm wet-day threshold, a Gamma baseline and strict exceedance of the calibration all-day P95 (25.2 mm). Calibration is 2001–2020; evaluation is 2021–2025. Evaluate seasonal and tail behaviour before release.
+Historical preprocessing, exploratory analysis and calibration are complete locally; simulation results are pending. First-order BIC is 4046.67 versus 5922.57 for independent occurrence. Gamma has the lowest AIC/BIC among the compared distributions; its stationary wet probability is 0.860077 and model daily exceedance probability at 25.2 mm is 0.054483. The P99 tail is underestimated. Gridded reanalysis may differ from local gauge measurements; short-memory models may miss persistent events and heavy tails. Use Open-Meteo Best Match hourly data, a 0.1 mm wet-day threshold, a Gamma baseline and strict exceedance of the calibration all-day P95 (25.2 mm). Calibration is 2001–2020; evaluation is 2021–2025. Evaluate seasonal and tail behaviour before release.
 
 ## Key references
 
@@ -45,7 +45,7 @@ Full list: [REFERENCES.md](REFERENCES.md).
 
 ## AI assistance
 
-AI assisted with the initial scaffold, literature summaries, preprocessing, exploratory analysis and path corrections. Author review, modifications and verification are pending.
+AI assisted with the initial scaffold, literature summaries, preprocessing, exploratory analysis, path corrections, calibration, likelihood diagnostics and analytical checks. Author review, modifications and verification are pending.
 
 ## Licence and credits
 
