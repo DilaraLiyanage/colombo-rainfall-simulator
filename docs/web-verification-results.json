@@ -1,0 +1,239 @@
+{
+  "deterministic": [
+    {
+      "name": "All exported and perturbed matrices and Gamma parameters",
+      "passed": true
+    },
+    {
+      "name": "Absorbing dry",
+      "passed": true
+    },
+    {
+      "name": "Absorbing wet",
+      "passed": true
+    },
+    {
+      "name": "Deterministic alternating",
+      "passed": true
+    },
+    {
+      "name": "All twelve months",
+      "passed": true
+    },
+    {
+      "name": "Leap day and year boundary",
+      "passed": true
+    },
+    {
+      "name": "Seasonal boundary uses actual preceding state",
+      "passed": true
+    },
+    {
+      "name": "Year boundary preserves state",
+      "passed": true
+    },
+    {
+      "name": "Dry zero and valid wet amounts",
+      "passed": true
+    },
+    {
+      "name": "Strict P95/P99 threshold classification",
+      "passed": true
+    },
+    {
+      "name": "Identical seed and scenario; different seed",
+      "passed": true
+    },
+    {
+      "name": "Odds perturbation and complement",
+      "passed": true
+    },
+    {
+      "name": "Scale perturbation leaves shape and thresholds fixed",
+      "passed": true
+    },
+    {
+      "name": "Seasonal model reduces to homogeneous when blocks match",
+      "passed": true
+    },
+    {
+      "name": "Frozen Python sensitivity fixtures (odds, scale, analytical risks)",
+      "passed": true
+    },
+    {
+      "name": "Known spell lengths",
+      "passed": true
+    }
+  ],
+  "comparisons": [
+    {
+      "model": "homogeneous",
+      "metric": "stationary_wet_probability",
+      "replications": 600,
+      "days": 3650,
+      "python": 0.8600766703176342,
+      "js_analytical": 0.8600766703175748,
+      "analytical_error": 5.939693181744587e-14,
+      "analytical_tolerance": 9.600766703176343e-9,
+      "estimate": 0.8599844748858447,
+      "mcse": 0.00045197984520500004,
+      "absolute_error": 0.00009219543178951017,
+      "tolerance": 0.00180792038082,
+      "passed": true
+    },
+    {
+      "model": "homogeneous",
+      "metric": "mean_wet_mm",
+      "replications": 600,
+      "days": 3650,
+      "python": 8.359239292871614,
+      "js_analytical": 8.359239292871807,
+      "analytical_error": 1.936228954946273e-13,
+      "analytical_tolerance": 8.459239292871613e-8,
+      "estimate": 8.346917154123355,
+      "mcse": 0.007257435855593584,
+      "absolute_error": 0.012322138748258382,
+      "tolerance": 0.029029744422374337,
+      "passed": true
+    },
+    {
+      "model": "homogeneous",
+      "metric": "expected_daily_mm",
+      "replications": 600,
+      "days": 3650,
+      "python": 7.189586697401353,
+      "js_analytical": 7.1895866974010225,
+      "analytical_error": 3.304023721284466e-13,
+      "analytical_tolerance": 7.289586697401353e-8,
+      "estimate": 7.178272633270514,
+      "mcse": 0.0073800265424611025,
+      "absolute_error": 0.011314064130838908,
+      "tolerance": 0.02952010716984441,
+      "passed": true
+    },
+    {
+      "model": "homogeneous",
+      "metric": "mean_wet_spell_days",
+      "replications": 600,
+      "days": 3650,
+      "python": 17.84659090909091,
+      "js_analytical": 17.846590909090914,
+      "analytical_error": 3.552713678800501e-15,
+      "analytical_tolerance": 1.794659090909091e-7,
+      "estimate": 17.894547583691665,
+      "mcse": 0.05411775359280603,
+      "absolute_error": 0.04795667460075492,
+      "tolerance": 0.21647101537122412,
+      "passed": true
+    },
+    {
+      "model": "homogeneous",
+      "metric": "mean_dry_spell_days",
+      "replications": 600,
+      "days": 3650,
+      "python": 2.9034090909090913,
+      "js_analytical": 2.9034090909090913,
+      "analytical_error": 0,
+      "analytical_tolerance": 3.0034090909090914e-8,
+      "estimate": 2.912286939304176,
+      "mcse": 0.007107344880247279,
+      "absolute_error": 0.008877848395084875,
+      "tolerance": 0.028429380520989117,
+      "passed": true
+    },
+    {
+      "model": "homogeneous",
+      "metric": "daily_P95_exceedance",
+      "replications": 600,
+      "days": 3650,
+      "python": 0.054483042657664967,
+      "js_analytical": 0.054483042657665126,
+      "analytical_error": 1.5959455978986625e-16,
+      "analytical_tolerance": 1.5448304265766497e-9,
+      "estimate": 0.05428538812785389,
+      "mcse": 0.00015561502428195322,
+      "absolute_error": 0.00019765452981107545,
+      "tolerance": 0.0006224610971278129,
+      "passed": true
+    },
+    {
+      "model": "homogeneous",
+      "metric": "daily_P99_exceedance",
+      "replications": 600,
+      "days": 3650,
+      "python": 0.007369829278390623,
+      "js_analytical": 0.007369829278389864,
+      "analytical_error": 7.589415207398531e-16,
+      "analytical_tolerance": 1.0736982927839063e-9,
+      "estimate": 0.00742100456621005,
+      "mcse": 0.00006106322001802998,
+      "absolute_error": 0.00005117528781942767,
+      "tolerance": 0.00024425388007211994,
+      "passed": true
+    },
+    {
+      "model": "seasonal",
+      "metric": "stationary_wet_probability",
+      "replications": 1000,
+      "days": 1826,
+      "python": 0.8608000830172091,
+      "js_analytical": 0.8608000830172288,
+      "analytical_error": 1.965094753586527e-14,
+      "analytical_tolerance": 9.608000830172092e-9,
+      "estimate": 0.8607081051478651,
+      "mcse": 0.00037677743037801124,
+      "absolute_error": 0.00009197786934400654,
+      "tolerance": 0.0015071107215120449,
+      "passed": true
+    },
+    {
+      "model": "seasonal",
+      "metric": "expected_daily_mm",
+      "replications": 1000,
+      "days": 1826,
+      "python": 7.18999024123056,
+      "js_analytical": 7.189990241230475,
+      "analytical_error": 8.526512829121202e-14,
+      "analytical_tolerance": 7.28999024123056e-8,
+      "estimate": 7.19176565140745,
+      "mcse": 0.006950116558722452,
+      "absolute_error": 0.001775410176890091,
+      "tolerance": 0.027800467234889808,
+      "passed": true
+    },
+    {
+      "model": "seasonal",
+      "metric": "daily_P95_exceedance",
+      "replications": 1000,
+      "days": 1826,
+      "python": 0.05142846524329865,
+      "js_analytical": 0.05142846524329944,
+      "analytical_error": 7.91033905045424e-16,
+      "analytical_tolerance": 1.5142846524329864e-9,
+      "estimate": 0.05150547645125963,
+      "mcse": 0.0001590991546577198,
+      "absolute_error": 0.00007701120796097666,
+      "tolerance": 0.0006363976186308792,
+      "passed": true
+    },
+    {
+      "model": "seasonal",
+      "metric": "daily_P99_exceedance",
+      "replications": 1000,
+      "days": 1826,
+      "python": 0.008166322120328993,
+      "js_analytical": 0.008166322120328993,
+      "analytical_error": 0,
+      "analytical_tolerance": 1.08166322120329e-9,
+      "estimate": 0.008212486308871855,
+      "mcse": 0.0000644311550358542,
+      "absolute_error": 0.00004616418854286146,
+      "tolerance": 0.0002577256201434168,
+      "passed": true
+    }
+  ],
+  "elapsed_seconds": 1.2095582159999998,
+  "passed": true,
+  "engine": "v22.16.0",
+  "execution": "Standalone JavaScript engine; no browser DOM"
+}

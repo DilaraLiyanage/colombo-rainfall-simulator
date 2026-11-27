@@ -1,31 +1,48 @@
 # User guide
 
-## Open the interface
+## Run the web simulator
 
-Open `docs/index.html` in a browser, or use the Pages link in the README after deployment. No server or API key is required for the status page.
+Open `docs/index.html` in a modern browser. All code, styles and scientific parameters are local; no backend, npm, CDN, account or internet connection is needed for simulation after the files are available. The external repository/attribution links require connectivity only if opened. For Pages, configure Settings → Pages → Deploy from a branch → `main` → `/docs`. Expected address: https://dilaraliyanage.github.io/colombo-rainfall-simulator/ . Deployment and direct-file loading must be verified independently.
 
-## Current state
+## Controls and reproducible example
 
-The page displays development status only. Start, Pause and Reset, simulation horizon, seed and scenario controls are planned, not functional. Parameter ranges and defaults are pending. No live chart or metrics are available.
+1. Choose Seasonal (destination-date NEM/FIM/SWM/SIM) or Homogeneous (constant parameters).
+2. Select start date, duration (1–3650 days), and preceding day's state. The default wet origin corresponds to the final calibration state; on other dates it is simply an explicit synthetic initial condition.
+3. Select a preset or change the dry-to-wet odds, wet-to-wet odds and Gamma scale multipliers between 0.8 and 1.2. A 20% odds change is not 20 percentage points. Gamma shape, 0.1 mm wet threshold and fixed P95/P99 thresholds remain unchanged.
+4. Select the unsigned 32-bit seed (default 42) and speed. Start, Pause, Resume and Run instantly use the same trajectory; speed does not affect random draws. Reset clears the trajectory, retains selected controls and unlocks them. Changing scenario mid-run is disabled. Reset before making changes.
+5. Read the daily rainfall plot, state timeline, cumulative rainfall, statistics, analytical risk table and active transition/amount parameters. When days outnumber chart pixels, the daily plot uses maxima within display bins and timeline bins prioritise extreme events; mixed states use grey-blue. The underlying statistics always use all days.
 
-## Planned usage
+**Verified example:** seasonal baseline, start 2021-01-01, duration 365, preceding state wet, seed 42, all multipliers 1.0. Run instantly. Actual Chromium in-memory run: 312 wet days (85.48%), cumulative 2,828.0 mm (rounded display), mean daily rainfall 7.75 mm, maximum 87.94 mm, 29 P95 and 6 P99 exceedances, longest observed wet/dry spells 125/8 days. These are synthetic results, not observations or forecasts. [Screenshot](docs/screenshots/web-dashboard.png).
 
-After implementation, choose a horizon, seed and supported scenario, start the simulation, inspect rainfall and summary statistics, then pause or reset. A reproducible example scenario, labelled screenshot and notebook comparison value will be added after verification.
+## Interpret the results
 
-## Interpretation
+Single-trajectory statistics are realised frequencies, not analytical probabilities or confidence intervals. The risk table averages calendar-dependent model expectations over the selected horizon and same preceding state; baseline and scenario use the same dates and model. Longest spells include endpoint runs as observed inside the simulated window, unlike the notebook's complete-spell diagnostic. Intensity dominates marginal extreme-event sensitivity in the investigated range; persistence influences clustering. No flood model, climate projection, or operational weather forecast is implied. Historical reanalysis and aggregation uncertainty, Gamma far-tail limitations and first-order spell limitations remain.
 
-Synthetic rainfall is not a weather forecast or flood warning. Results will depend on calibration and model assumptions.
+## Regenerate the browser parameter asset
 
+The notebook remains authoritative. Run it if scientific outputs need regenerating, then execute from the repository root:
+
+```powershell
+python generate_web_parameters.py
+```
+
+This standard-library-only conversion reads `data/processed/model_parameters.json`, `analytical_benchmarks.csv`, `seasonal_analytical.csv` and `sensitivity_scenarios.csv`, exports `docs/model-parameters.js` and records the model JSON SHA-256 and Git blob hash. It does not change raw or processed science. Commit the generated JS asset with the app; never transcribe fitted parameters manually. The classic script tags use relative paths and do not use fetch(), so no local JSON CORS request is required.
+
+## Verify the web model
+
+Click **Run model verification** in the Method & guide section. It runs 16 deterministic checks (including 29 distinct shared-input sensitivity fixtures), seven homogeneous and four seasonal analytical/Monte Carlo checks. The total sample is 4,016,000 daily observations, with distinct seeded streams per trajectory and occurrence/intensity/initialisation components. Each comparison requires absolute error ≤ 4 MCSE + 1e-9 using trajectory-level MCSE; the separate analytical calculation must agree with the Python target within atol=1e-9 plus rtol=1e-8. JavaScript and NumPy streams are not expected to be identical. These are implementation checks, not validation against real weather. Verification temporarily pauses a running animation and may briefly block the interface on slower devices.
+
+Actual local evidence: [JS verification](docs/web-verification-results.json), [Chromium UI and verification](docs/web-browser-test-results.json). Both environments passed all model checks; the browser passed 14 UI tests with no uncaught errors. Browser navigation to file:// and localhost was blocked by its administrator policy; the screenshots and interactions were obtained by in-memory rendering of the exact local HTML, CSS and JavaScript assets. Independent direct-file, offline and Pages checks remain pending. To verify offline, disable network access after the files are available, open the local HTML, run both models and the verification button. After Pages deployment, repeat on the expected repository subpath.
 
 ## Execute the scientific notebook
 
 Windows: open the repository folder in VS Code, select the named Python 3.14 environment and install `requirements.txt`. Install Jupyter kernel support if not already installed (`python -m pip install ipykernel`). The four scientific pins are NumPy 2.3.5, pandas 2.3.3, SciPy 1.17.0 and Matplotlib 3.10.8. Open the notebook and use Restart Kernel and Run All. The notebook detects its repository root even when the kernel starts in `notebook/`. Existing compatible dependencies are not reinstalled. Raw files are read from `data/raw/`; processed files and figures are overwritten.
 
-Colab: before publishing, open the corrected local notebook file in Colab (upload the notebook itself, not any datasets). After publishing, open it from the GitHub badge. Start a fresh runtime and choose Runtime → Run all. The first code cell installs the exact pins using `%pip`; C01 checks installed and loaded versions and C02 downloads the raw CSV snapshots. No manual data upload, credential or intermediate cell editing is needed on a compatible runtime. If Colab has preloaded an incompatible scientific package, the version check stops execution; restart the session and run all again. Fresh Colab no-intervention execution is not yet verified. Verify actual loaded versions in C01 and `runtime_versions.csv`.
+Colab: before publishing, open the corrected local notebook file in Colab (upload the notebook itself, not any datasets). After publishing, open it from the GitHub badge. Start a fresh runtime and choose Runtime → Run all. The first code cell installs the exact pins using `%pip`; C01 checks installed and loaded versions and C02 downloads the raw CSV snapshots. No manual data upload, credential or intermediate cell editing is needed on a compatible runtime. If Colab has preloaded an incompatible scientific package, the version check stops execution; restart the session and run all again. The author has subsequently reported successful Google Colab execution of the frozen notebook; unattended execution on other runtime images is not established. Verify actual loaded versions in C01 and `runtime_versions.csv`.
 
 The installation cell precedes C01; all 30 numbered cells execute normally in the same kernel. Run all from a fresh kernel, and stop if any cell fails. C01 invalidates the prior completion manifest after the installation cell returns; if installation itself is interrupted, an old manifest may still be present. Use a fresh output root for acceptance testing and check the actual C30 completion message. Do not delete or reload imported NumPy/pandas modules to work around a version conflict. Colab documents this preloaded-package issue at https://github.com/googlecolab/colabtools/issues/5205. If required, restart the session (not delete the runtime) after installation and run all again. This fallback is not evidence of unattended execution.
 
-Conventional notebook revision: the installation cell uses `%pip` followed by C01 imports and exact installed/loaded version checks; C02–C30 are source-identical to the previous scientific cells after removing the dispatch prefix. A Linux Python 3.13.5 diagnostic copy using the available pandas 2.2.3 completed all 31 code cells in 69.82 s including installation and kernel startup. It regenerated all 72 outputs and displayed all 32 figures. The existing metric-aware verifier accepted the outputs with zero REVIEW or FAIL records; 69 files were byte-identical to the reference and only three timing files differed. The delivered notebook retains pandas 2.3.3: its exact-pin test stopped at C01 because the configured package index did not provide that version. New Windows and fresh Colab execution remain unverified. A Colab runtime with already-imported incompatible packages may require one session restart; automatic no-intervention execution has not been established.
+Conventional notebook revision: the installation cell uses `%pip` followed by C01 imports and exact installed/loaded version checks; C02–C30 are source-identical to the previous scientific cells after removing the dispatch prefix. A Linux Python 3.13.5 diagnostic copy using the available pandas 2.2.3 completed all 31 code cells in 69.82 s including installation and kernel startup. It regenerated all 72 outputs and displayed all 32 figures. The existing metric-aware verifier accepted the outputs with zero REVIEW or FAIL records; 69 files were byte-identical to the reference and only three timing files differed. The delivered notebook retains pandas 2.3.3: its exact-pin test stopped at C01 because the configured package index did not provide that version. The earlier diagnostic did not independently verify Windows or Colab; the author has since reported successful local and Colab execution. A Colab runtime with already-imported incompatible packages may require one session restart; automatic no-intervention execution has not been established.
 
 ## Independently compare regenerated outputs
 
@@ -103,4 +120,4 @@ The original notebook's full scientific calculation and its 21 homogeneous tests
 
 For isolated local notebook tests, set `RAINFALL_DATA_DIR` and `RAINFALL_OUTPUT_DIR` before starting the kernel. Remove overrides before normal execution.
 
-The author reports successful Windows execution with the target pins and regeneration of all 72 outputs. The original strict utility reported differences; a complete revised comparison of the actual Windows outputs remains pending. The revised comparator has been exercised under Linux Python 3.13.5 with copies of the reference and synthetic drift/corruption fixtures. Fresh Colab verification remains pending. No new dependencies or notebook changes are required for this comparison update.
+The author reports successful Windows execution with the target pins and regeneration of all 72 outputs. The original strict utility reported differences; a complete revised comparison of the actual Windows outputs remains pending. The revised comparator has been exercised under Linux Python 3.13.5 with copies of the reference and synthetic drift/corruption fixtures. The author reports successful Colab notebook execution; the web implementation does not rerun that workflow. No new dependencies or notebook changes are required for this comparison update.
